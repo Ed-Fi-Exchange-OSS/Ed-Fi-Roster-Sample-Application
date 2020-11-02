@@ -1,6 +1,6 @@
-﻿# Insert Repository Name Here
+﻿# Ed-Fi-Roster-Sample-Application
 
-Insert project information here
+Ed-Fi Roster Sample Application. This repository is to be used in conjunction with the [Ed-Fi Roster Sample Application](https://techdocs.ed-fi.org/display/SK/Ed-Fi+Roster+Sample+Application)
 
 ## Legal Information
 

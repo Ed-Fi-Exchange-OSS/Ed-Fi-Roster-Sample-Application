@@ -1,0 +1,55 @@
+﻿@model IEnumerable<EdFi.Roster.Sdk.Models.ApiLogEntry>
+
+@{
+    ViewData["Title"] = "API Call Logs";
+    int cnt = 0;
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    <button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("ClearLogs")'">Clear Logs</button>
+    <button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("RawLog")'">View Raw Logs</button>
+</div>
+<div class="con">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-2">Date/Time</div>
+        <div class="col-1">Status</div>
+        <div class="col-1">Method</div>
+        <div class="col-7">Resource</div>
+    </div>
+    @foreach (var item in Model)
+    {
+        <div class="row">
+            <div class="col-1"><button id="toggleBtn@(cnt)" data-id="@cnt" class="btn btn-sm btn-link">Show Raw Data</button></div>
+            <div class="col-2">@Html.DisplayFor(modelItem => item.LogDateTime)</div>
+            <div class="col-1">@Html.DisplayFor(modelItem => item.Response.StatusCode)</div>
+            <div class="col-1">@Html.DisplayFor(modelItem => item.Request.Method)</div>
+            <div class="col-7">@Html.DisplayFor(modelItem => item.Response.Uri.OriginalString)</div>
+        </div>
+        <div id="detailsDiv@(cnt)" class="row" style="display:none">
+            <div class="col-1"></div>
+            <div class="col-2">Response Content:</div>
+            <div class="col-9">@Html.DisplayFor(modelItem => item.Response.Content)</div>
+        </div>
+        {
+            cnt++;
+        }
+    }
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $('[id^=toggleBtn]').each(function () {
+            $(this).on('click', function () {
+                var divId = $(this).data('id');
+                var detailsDiv = $('#detailsDiv' + divId);
+                detailsDiv.toggle();
+                var currInnerText = $(this).text();
+                $(this).text(currInnerText === 'Show Raw Data' ? 'Hide Raw Data' : 'Show Raw Data');
+            });
+        });
+    </script>
+
+}

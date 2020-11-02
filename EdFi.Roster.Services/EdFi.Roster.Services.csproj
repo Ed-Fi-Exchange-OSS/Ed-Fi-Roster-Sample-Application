@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdFi.Roster.Data\EdFi.Roster.Data.csproj" />
+    <ProjectReference Include="..\EdFi.Roster.Models\EdFi.Roster.Models.csproj" />
+    <ProjectReference Include="..\EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

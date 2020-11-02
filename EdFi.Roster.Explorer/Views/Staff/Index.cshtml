@@ -1,0 +1,88 @@
+﻿@model IEnumerable<EdFi.Roster.Sdk.Models.EnrollmentComposites.Staff>
+
+@{
+    ViewData["Title"] = "Staff";
+    var staffResponseData = (ExtendedInfoResponse<List<Staff>>)ViewData["staffExtendedResponseInfo"];
+}
+
+<h1>Staff</h1>
+
+Operations
+
+Load / Reload
+<p> Get Staff From Ed - Fi Api (This will overwrite the currently stored staff records)</p>
+<div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadStaff")'">Get Staff</button></div>
+
+@if (staffResponseData != null)
+{
+    <div id="dvResultsRow" class="row">
+        <div class="col">
+            <div>
+                <span id="spTotalCalls"></span>
+                <div id="dvTotalRecordsRow" class="row">
+                    <div class="col">
+                        Total API Calls: <span id="spTotalRecords">@(staffResponseData.Pages.Count)</span>
+                    </div>
+                </div>
+                <div id="dvTotalRecordsRow" class="row">
+                    <div class="col">
+                        Total Records Returned: <span id="spTotalRecords">@(staffResponseData.FullDataSet.Count)</span>
+                    </div>
+                </div>
+                <input id="btnCallDetails" class="btn btn-link btn-xs pb-2 ml-2" type="button" data-toggle="collapse" data-target="#dvCallDetails" aria-expanded="false" aria-controls="collapseExample" value="Show call details">
+            </div>
+            <div id="dvCallDetails" class="collapse mt-1">
+                <ul id="ulResults" class="list-group">
+                    @for (int i = 0; i < staffResponseData.Pages.Count; i++)
+                    {
+                        <li class="list-group-item">
+                            <div>Page @(i+1)  - Records Returned-@(staffResponseData.Pages[i].Data.Count).</div>
+                            <div>Url:@(staffResponseData.Pages[i].ResponseUri.OriginalString)</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+<hr />
+<form>
+    Current Staff Saved (@Model.Count() Records)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.StaffUniqueId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FirstName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LastSurname)
+                </th>
+                <th>
+                    Api Resource Id
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StaffUniqueId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastSurname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

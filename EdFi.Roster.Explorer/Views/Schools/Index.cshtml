@@ -1,0 +1,83 @@
+﻿@model IEnumerable<EdFi.Roster.Sdk.Models.EnrollmentComposites.School>
+
+@{
+    ViewData["Title"] = "Schools";
+    var schoolResponseData = (ExtendedInfoResponse<List<School>>)ViewData["schoolExtendedResponseInfo"];
+
+}
+
+<h1>Schools</h1>
+
+Operations
+
+Load / Reload
+
+<p> Get Schools from the configured Ed - Fi API (This will overwrite the currently stored schools</p>
+<div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadSchools")'">Get Schools</button></div>
+@if (schoolResponseData != null)
+{
+    <div id="dvResultsRow" class="row">
+        <div class="col">
+            <div>
+                <span id="spTotalCalls"></span>
+                <div id="dvTotalCallssRow" class="row">
+                    <div class="col">
+                        Total API Calls: <span id="spTotalRecords">@(schoolResponseData.Pages.Count)</span>
+                    </div>
+                </div>
+                <div id="dvTotalRecordsRow" class="row">
+                    <div class="col">
+                        Total Records Returned: <span id="spTotalRecords">@(schoolResponseData.FullDataSet.Count)</span>
+                    </div>
+                </div>
+                <input id="btnCallDetails" class="btn btn-link btn-xs pb-2 ml-2" type="button" data-toggle="collapse" data-target="#dvCallDetails" aria-expanded="false" aria-controls="collapseExample" value="Show call details">
+            </div>
+            <div id="dvCallDetails" class="collapse mt-1">
+                <ul id="ulResults" class="list-group">
+                    @for (int i = 0; i < schoolResponseData.Pages.Count; i++)
+                    {
+                        <li class="list-group-item">
+                            <div>Page @(i+1)  - Records Returned-@(schoolResponseData.Pages[i].Data.Count).</div>
+                            <div>Url:@(schoolResponseData.Pages[i].ResponseUri.OriginalString)</div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}
+<hr />
+<form>
+    Current Schools Saved
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.SchoolId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.NameOfInstitution)
+                </th>
+                <th>
+                    Api Resource Id
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SchoolId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NameOfInstitution)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
