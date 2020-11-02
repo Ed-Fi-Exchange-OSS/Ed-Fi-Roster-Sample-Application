@@ -1,6 +1,6 @@
 ﻿# Ed-Fi-Roster-Sample-Application
 
-Ed-Fi Roster Sample Application. This repository is to be used in conjunction with the [Ed-Fi Roster Sample Application](https://techdocs.ed-fi.org/display/SK/Ed-Fi+Roster+Sample+Application)
+Ed-Fi Roster Sample Application. This repository is to be used in conjunction with the [Ed-Fi Roster Sample Application](https://techdocs.ed-fi.org/display/SK/Ed-Fi+Roster+Sample+Application) page in the [Ed-Fi Tech Docs](https://techdocs.ed-fi.org).
 
 ## Legal Information
 
