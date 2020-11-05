@@ -2,6 +2,15 @@
 
 Ed-Fi Roster Sample Application. This repository is to be used in conjunction with the [Ed-Fi Roster Sample Application](https://techdocs.ed-fi.org/display/SK/Ed-Fi+Roster+Sample+Application) page in the [Ed-Fi Tech Docs](https://techdocs.ed-fi.org).
 
+## Prerequisites
+The prerequisites for opening and running this solution are as follows:
+
+* Visual Studio 2019 Community
+* .NET Framework 4.6.1
+    * This is for the SDK generated with Swagger Tools
+* .NET Core 3.1
+    * This is for the other projects in the solution
+
 ## Legal Information
 
 Copyright (c) 2020 Ed-Fi Alliance, LLC and contributors.
