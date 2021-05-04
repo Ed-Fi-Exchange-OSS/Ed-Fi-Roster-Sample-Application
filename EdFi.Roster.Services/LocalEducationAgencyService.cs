@@ -21,9 +21,9 @@ namespace EdFi.Roster.Services
             _dataService.SaveAsync(localEducationAgencies);
         }
 
-        public IEnumerable<LocalEducationAgency> ReadAll()
+        public async Task<IEnumerable<LocalEducationAgency>> ReadAll()
         {
-            return _dataService.ReadAsync<List<LocalEducationAgency>>().Result;
+            return await _dataService.ReadAsync<List<LocalEducationAgency>>();
         }
 
         public List<LocalEducationAgency> GetAllFromApi()

@@ -1,7 +1,6 @@
 ﻿using EdFi.Roster.Data;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,9 +21,9 @@ namespace EdFi.Roster.Services
             _dataService.SaveAsync(sections);
         }
 
-        public IEnumerable<Section> ReadAll()
+        public async Task<IEnumerable<Section>> ReadAll()
         {
-            return _dataService.ReadAsync<List<Section>>().Result;
+            return await _dataService.ReadAsync<List<Section>>();
         }
 
         public async Task<ExtendedInfoResponse<List<Section>>> GetAllSectionsWithExtendedInfoAsync()

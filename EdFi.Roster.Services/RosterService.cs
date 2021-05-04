@@ -3,6 +3,7 @@ using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace EdFi.Roster.Services
 {
@@ -13,13 +14,13 @@ namespace EdFi.Roster.Services
         {
             _dataService = dataService;
         }
-        public LocalEducationAgencyRoster GetRoster()
+        public async Task<LocalEducationAgencyRoster> GetRoster()
         {
-            var leas = _dataService.ReadAsync<List<LocalEducationAgency>>().Result;
-            var schools = _dataService.ReadAsync<List<School>>().Result;
-            var sections = _dataService.ReadAsync<List<Section>>().Result;
-            var staff = _dataService.ReadAsync<List<Staff>>().Result;
-            var students = _dataService.ReadAsync<List<Student>>().Result;
+            var leas = await _dataService.ReadAsync<List<LocalEducationAgency>>();
+            var schools = await _dataService.ReadAsync<List<School>>();
+            var sections = await _dataService.ReadAsync<List<Section>>();
+            var staff = await _dataService.ReadAsync<List<Staff>>();
+            var students = await _dataService.ReadAsync<List<Student>>();
 
             var returnLeaRoster = new LocalEducationAgencyRoster();
             returnLeaRoster.LocalEducationAgency = leas[0];

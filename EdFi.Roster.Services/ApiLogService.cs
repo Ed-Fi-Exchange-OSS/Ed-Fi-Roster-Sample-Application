@@ -1,6 +1,6 @@
 ﻿using EdFi.Roster.Sdk.Models;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EdFi.Roster.Services
 {
@@ -12,9 +12,10 @@ namespace EdFi.Roster.Services
             apiLogService = new Sdk.Services.ApiLogService();
         }
         
-        public IEnumerable<ApiLogEntry> ReadAll()
+        public async Task<IEnumerable<ApiLogEntry>> ReadAll()
         {
-            return apiLogService.ReadAllLogsAsync().Result;
+            var apiLogEntries = await apiLogService.ReadAllLogsAsync();
+            return apiLogEntries;
         }
 
         public void ClearLogs()
