@@ -1,4 +1,5 @@
-﻿using EdFi.Roster.Data;
+﻿using System.Threading.Tasks;
+using EdFi.Roster.Data;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,13 +12,13 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             studentService = new StudentService(new JsonFileDataService());
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(studentService.ReadAll());
+            return View(await studentService.ReadAll());
         }
-        public IActionResult LoadStudents()
+        public async Task<IActionResult> LoadStudents()
         {
-            var response = studentService.GetAllStudentsWithExtendedInfoAsync().Result;
+            var response = await studentService.GetAllStudentsWithExtendedInfoAsync();
             studentService.Save(response.FullDataSet);
             ViewData["studentExtendedResponseInfo"] = response;
             return View("Index", response.FullDataSet);
