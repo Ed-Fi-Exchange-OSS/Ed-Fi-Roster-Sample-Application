@@ -12,7 +12,7 @@ namespace EdFi.Roster.Services
             apiLogService = new Sdk.Services.ApiLogService();
         }
         
-        public async Task<IEnumerable<ApiLogEntry>> ReadAll()
+        public async Task<IEnumerable<ApiLogEntry>> ReadAllAsync()
         {
             var apiLogEntries = await apiLogService.ReadAllLogsAsync();
             return apiLogEntries;

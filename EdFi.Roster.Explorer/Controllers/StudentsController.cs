@@ -14,7 +14,7 @@ namespace EdFi.Roster.Explorer.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            return View(await studentService.ReadAll());
+            return View(await studentService.ReadAllAsync());
         }
         public async Task<IActionResult> LoadStudents()
         {

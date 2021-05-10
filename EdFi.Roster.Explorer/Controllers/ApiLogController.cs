@@ -16,7 +16,7 @@ namespace EdFi.Roster.Explorer.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var logs = (await apiLogService.ReadAll()).OrderByDescending(l => l.LogDateTime);
+            var logs = (await apiLogService.ReadAllAsync()).OrderByDescending(l => l.LogDateTime);
             return View(logs);
         }
 
@@ -28,7 +28,7 @@ namespace EdFi.Roster.Explorer.Controllers
 
         public async Task<IActionResult> RawLog()
         {
-            var logs = (await apiLogService.ReadAll()).OrderByDescending(l => l.LogDateTime);
+            var logs = (await apiLogService.ReadAllAsync()).OrderByDescending(l => l.LogDateTime);
             return View("RawLog", JsonSerializer.Serialize(logs, options: new JsonSerializerOptions { WriteIndented = true }));
         }
     }

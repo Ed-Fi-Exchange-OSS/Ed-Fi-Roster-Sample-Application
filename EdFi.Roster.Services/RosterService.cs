@@ -14,7 +14,7 @@ namespace EdFi.Roster.Services
         {
             _dataService = dataService;
         }
-        public async Task<LocalEducationAgencyRoster> GetRoster()
+        public async Task<LocalEducationAgencyRoster> GetRosterAsync()
         {
             var leas = await _dataService.ReadAsync<List<LocalEducationAgency>>();
             var schools = await _dataService.ReadAsync<List<School>>();

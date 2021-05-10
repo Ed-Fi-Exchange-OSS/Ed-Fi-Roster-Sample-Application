@@ -18,14 +18,14 @@ namespace EdFi.Roster.Explorer.Controllers
         public async Task<ActionResult> HierarchyWithTerms()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = await rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }
         public async Task<ActionResult> HierarchyByStaff()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = await rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }
@@ -33,7 +33,7 @@ namespace EdFi.Roster.Explorer.Controllers
         public async Task<ActionResult> HierarchyBySchoolSection()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = await rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }

@@ -21,7 +21,7 @@ namespace EdFi.Roster.Explorer.Controllers
         public async Task<IActionResult> Index()
         {
             //Read any saved Schools previously saved to be displayed
-            return View(await schoolService.ReadAll());
+            return View(await schoolService.ReadAllAsync());
         }
 
         public async Task<IActionResult> LoadSchools()

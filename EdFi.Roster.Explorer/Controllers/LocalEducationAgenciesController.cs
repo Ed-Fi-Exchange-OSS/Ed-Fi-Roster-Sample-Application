@@ -16,7 +16,7 @@ namespace EdFi.Roster.Explorer.Controllers
         public async Task<IActionResult> Index()
         {
             //Read any saved LEAs to be displayed
-            return View(await localEducationAgencyService.ReadAll());
+            return View(await localEducationAgencyService.ReadAllAsync());
         }
 
         public async Task<IActionResult> LoadLeas()

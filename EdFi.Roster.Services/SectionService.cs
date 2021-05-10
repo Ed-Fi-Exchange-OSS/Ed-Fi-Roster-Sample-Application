@@ -21,7 +21,7 @@ namespace EdFi.Roster.Services
             _dataService.SaveAsync(sections);
         }
 
-        public async Task<IEnumerable<Section>> ReadAll()
+        public async Task<IEnumerable<Section>> ReadAllAsync()
         {
             return await _dataService.ReadAsync<List<Section>>();
         }
