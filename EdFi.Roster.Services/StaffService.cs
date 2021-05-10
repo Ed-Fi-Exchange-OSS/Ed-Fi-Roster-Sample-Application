@@ -15,9 +15,9 @@ namespace EdFi.Roster.Services
             _dataService = dataService;
         }
 
-        public IEnumerable<Staff> ReadAll()
+        public async Task<IEnumerable<Staff>> ReadAllAsync()
         {
-            return _dataService.ReadAsync<List<Staff>>().Result;
+            return await _dataService.ReadAsync<List<Staff>>();
         }
 
         public void Save(List<Staff> staff)

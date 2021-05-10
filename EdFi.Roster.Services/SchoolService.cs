@@ -20,9 +20,9 @@ namespace EdFi.Roster.Services
             _dataService.SaveAsync(schools);
         }
 
-        public IEnumerable<School> ReadAll()
+        public async Task<IEnumerable<School>> ReadAllAsync()
         {
-            return _dataService.ReadAsync<List<School>>().Result;
+            return await _dataService.ReadAsync<List<School>>();
         }
         public async Task<ExtendedInfoResponse<List<School>>> GetAllSchoolsWithExtendedInfoAsync()
         {

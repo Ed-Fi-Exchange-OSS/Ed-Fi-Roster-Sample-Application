@@ -1,4 +1,5 @@
-﻿using EdFi.Roster.Data;
+﻿using System.Threading.Tasks;
+using EdFi.Roster.Data;
 using EdFi.Roster.Explorer.Models;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -14,25 +15,25 @@ namespace EdFi.Roster.Explorer.Controllers
         }
 
         // GET: RosterController/Details/5
-        public ActionResult HierarchyWithTerms()
+        public async Task<ActionResult> HierarchyWithTerms()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }
-        public ActionResult HierarchyByStaff()
+        public async Task<ActionResult> HierarchyByStaff()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }
 
-        public ActionResult HierarchyBySchoolSection()
+        public async Task<ActionResult> HierarchyBySchoolSection()
         {
             var rosterService = new RosterService(new JsonFileDataService());
-            var leaRoster = rosterService.GetRoster();
+            var leaRoster = await rosterService.GetRosterAsync();
             var returnRoster = new RosterViewModel(leaRoster);
             return View(returnRoster);
         }
