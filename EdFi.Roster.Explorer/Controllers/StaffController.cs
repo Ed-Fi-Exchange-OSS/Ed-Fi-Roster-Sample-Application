@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using EdFi.Roster.Data;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
