@@ -1,4 +1,5 @@
-﻿using EdFi.Roster.Data;
+﻿using System.Threading.Tasks;
+using EdFi.Roster.Data;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,13 +13,13 @@ namespace EdFi.Roster.Explorer.Controllers
             staffService = new StaffService(new JsonFileDataService());
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View(staffService.ReadAll());
+            return View(await staffService.ReadAllAsync());
         }
-        public IActionResult LoadStaff()
+        public async Task<IActionResult> LoadStaff()
         {
-            var response = staffService.GetAllStaffWithExtendedInfoAsync().Result;
+            var response = await staffService.GetAllStaffWithExtendedInfoAsync();
             staffService.Save(response.FullDataSet);
             ViewData["staffExtendedResponseInfo"] = response;
             return View("Index", response.FullDataSet);

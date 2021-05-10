@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using EdFi.Roster.Services;
@@ -16,9 +14,9 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             apiLogService = new ApiLogService();
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var logs = apiLogService.ReadAll().OrderByDescending(l => l.LogDateTime);
+            var logs = (await apiLogService.ReadAllAsync()).OrderByDescending(l => l.LogDateTime);
             return View(logs);
         }
 
@@ -28,9 +26,9 @@ namespace EdFi.Roster.Explorer.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult RawLog()
+        public async Task<IActionResult> RawLog()
         {
-            var logs = apiLogService.ReadAll().OrderByDescending(l => l.LogDateTime);
+            var logs = (await apiLogService.ReadAllAsync()).OrderByDescending(l => l.LogDateTime);
             return View("RawLog", JsonSerializer.Serialize(logs, options: new JsonSerializerOptions { WriteIndented = true }));
         }
     }
