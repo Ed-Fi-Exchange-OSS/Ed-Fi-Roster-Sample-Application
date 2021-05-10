@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using EdFi.Roster.Data;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,22 +6,22 @@ namespace EdFi.Roster.Explorer.Controllers
 {
     public class LocalEducationAgenciesController : Controller
     {
-        private readonly LocalEducationAgencyService localEducationAgencyService;
+        private readonly LocalEducationAgencyService _localEducationAgencyService;
 
-        public LocalEducationAgenciesController()
+        public LocalEducationAgenciesController(LocalEducationAgencyService localEducationAgencyService)
         {
-            this.localEducationAgencyService = new LocalEducationAgencyService(new JsonFileDataService());
+            _localEducationAgencyService = localEducationAgencyService;
         }
         public async Task<IActionResult> Index()
         {
             //Read any saved LEAs to be displayed
-            return View(await localEducationAgencyService.ReadAllAsync());
+            return View(await _localEducationAgencyService.ReadAllAsync());
         }
 
         public async Task<IActionResult> LoadLeas()
         {
-            var response = await localEducationAgencyService.GetAllLocalEducationAgenciesWithExtendedInfoAsync();
-            localEducationAgencyService.Save(response.FullDataSet);
+            var response = await _localEducationAgencyService.GetAllLocalEducationAgenciesWithExtendedInfoAsync();
+            await _localEducationAgencyService.Save(response.FullDataSet);
             ViewData["leaExtendedResponseInfo"] = response;
             return View("Index", response.FullDataSet);
         }
