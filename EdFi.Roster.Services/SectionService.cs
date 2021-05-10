@@ -1,29 +1,32 @@
-﻿using EdFi.Roster.Data;
-using EdFi.Roster.Models;
+﻿using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
 {
     public class SectionService
     {
-        private readonly IDataService _dataService;
+        private readonly IRosterDataService _rosterDataService;
 
-        public SectionService(IDataService dataService)
+        public SectionService(IRosterDataService rosterDataService)
         {
-            _dataService = dataService;
+            _rosterDataService = rosterDataService;
         }
 
-        public void Save(List<Section> sections)
+        public async Task Save(List<Section> sections)
         {
-            _dataService.SaveAsync(sections);
+            var sectionsList = sections.Select(JsonConvert.SerializeObject)
+                .Select(content => new RosterSection { Content = content }).ToList();
+            await _rosterDataService.SaveAsync(sectionsList);
         }
 
         public async Task<IEnumerable<Section>> ReadAllAsync()
         {
-            return await _dataService.ReadAsync<List<Section>>();
+            var sections = await _rosterDataService.ReadAllAsync<RosterSection>();
+            return sections.Select(section => JsonConvert.DeserializeObject<Section>(section.Content)).ToList();
         }
 
         public async Task<ExtendedInfoResponse<List<Section>>> GetAllSectionsWithExtendedInfoAsync()

@@ -1,35 +1,33 @@
-﻿using EdFi.Roster.Data;
-using EdFi.Roster.Models;
+﻿using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
 {
     public class LocalEducationAgencyService
     {
-        private readonly IDataService _dataService;
+        private readonly IRosterDataService _rosterDataService;
 
-        public LocalEducationAgencyService(IDataService dataService)
+        public LocalEducationAgencyService(IRosterDataService rosterDataService)
         {
-            _dataService = dataService;
+            _rosterDataService = rosterDataService;
         }
 
-        public void Save(List<LocalEducationAgency> localEducationAgencies)
+        public async Task Save(List<LocalEducationAgency> localEducationAgencies)
         {
-            _dataService.SaveAsync(localEducationAgencies);
+            var leas = localEducationAgencies.Select(JsonConvert.SerializeObject)
+                .Select(content => new RosterLocalEducationAgency {Content = content}).ToList();
+
+             await _rosterDataService.SaveAsync(leas);
         }
 
         public async Task<IEnumerable<LocalEducationAgency>> ReadAllAsync()
         {
-            return await _dataService.ReadAsync<List<LocalEducationAgency>>();
-        }
-
-        public List<LocalEducationAgency> GetAllFromApi()
-        {
-            var api = new ApiSdk.ApiFacade();
-            return api.LocalEducationAgenciesApi.GetLocalEducationAgencies();
+            var leas = await _rosterDataService.ReadAllAsync<RosterLocalEducationAgency>();
+            return leas.Select(lea => JsonConvert.DeserializeObject<LocalEducationAgency>(lea.Content)).ToList();
         }
 
         public async Task<ExtendedInfoResponse<List<LocalEducationAgency>>> GetAllLocalEducationAgenciesWithExtendedInfoAsync()
@@ -54,7 +52,6 @@ namespace EdFi.Roster.Services
                 response.FullDataSet.AddRange(currResponse.Data);
             } while (currResponseRecordCount >= limit);
 
-            var distinctSectionIds = response.FullDataSet.Select(x => x.Id).Distinct();
             return response;
         }
     }

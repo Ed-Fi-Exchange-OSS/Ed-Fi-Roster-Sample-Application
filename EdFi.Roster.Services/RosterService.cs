@@ -1,6 +1,4 @@
-﻿using EdFi.Roster.Data;
-using EdFi.Roster.Models;
-using EdFi.Roster.Sdk.Models.EnrollmentComposites;
+﻿using EdFi.Roster.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,21 +7,35 @@ namespace EdFi.Roster.Services
 {
     public class RosterService
     {
-        private readonly IDataService _dataService;
-        public RosterService(IDataService dataService)
+        private readonly LocalEducationAgencyService _localEducationAgencyService;
+        private readonly SchoolService _schoolService;
+        private readonly SectionService _sectionService;
+        private readonly StaffService _staffService;
+        private readonly StudentService _studentService;
+
+        public RosterService(LocalEducationAgencyService localEducationAgencyService
+            , SchoolService schoolService
+            , SectionService sectionService
+            , StaffService staffService
+            , StudentService studentService)
         {
-            _dataService = dataService;
+            _localEducationAgencyService = localEducationAgencyService;
+            _schoolService = schoolService;
+            _sectionService = sectionService;
+            _staffService = staffService;
+            _studentService = studentService;
         }
+
         public async Task<LocalEducationAgencyRoster> GetRosterAsync()
         {
-            var leas = await _dataService.ReadAsync<List<LocalEducationAgency>>();
-            var schools = await _dataService.ReadAsync<List<School>>();
-            var sections = await _dataService.ReadAsync<List<Section>>();
-            var staff = await _dataService.ReadAsync<List<Staff>>();
-            var students = await _dataService.ReadAsync<List<Student>>();
+            var leas = await _localEducationAgencyService.ReadAllAsync();
+            var schools = await _schoolService.ReadAllAsync();
+            var sections = await _sectionService.ReadAllAsync();
+            var staff = await _staffService.ReadAllAsync();
+            var students = await _studentService.ReadAllAsync();
 
             var returnLeaRoster = new LocalEducationAgencyRoster();
-            returnLeaRoster.LocalEducationAgency = leas[0];
+            returnLeaRoster.LocalEducationAgency = leas.ToList()[0];
 
             returnLeaRoster.SchoolRosters = (from s in schools
                                              select new SchoolRoster
