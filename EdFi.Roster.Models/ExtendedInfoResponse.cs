@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace EdFi.Roster.Models
 {
@@ -13,6 +12,8 @@ namespace EdFi.Roster.Models
         }
         public List<ExtendedInfoResponsePage<T>> Pages { get; set; }
         public T FullDataSet { get; set; }
+        public string ResponseData { get; set; }
+        public bool IsExtendedInfoAvailable { get; set; }
     }
     public class ExtendedInfoResponsePage<T>
     {

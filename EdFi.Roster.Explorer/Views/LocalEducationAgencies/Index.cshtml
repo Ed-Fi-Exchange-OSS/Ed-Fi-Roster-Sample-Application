@@ -1,8 +1,7 @@
-﻿@model IEnumerable<EdFi.Roster.Sdk.Models.EnrollmentComposites.LocalEducationAgency>
+﻿@model ExtendedInfoResponse<List<LocalEducationAgency>>
 
 @{
     ViewData["Title"] = "Local Education Agencies";
-    var leaResponseData = (ExtendedInfoResponse<List<LocalEducationAgency>>)ViewData["leaExtendedResponseInfo"];
 }
 
 <h1>Local Education Agencies</h1>
@@ -13,7 +12,7 @@ Load / Reload
 
 <div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadLeas")'">Get Local Education Agencies</button></div>
 
-@if (leaResponseData != null)
+@if (Model.IsExtendedInfoAvailable)
 {
     <div id="dvResultsRowLeas" class="row">
         <div class="col">
@@ -21,27 +20,59 @@ Load / Reload
                 <span id="spTotalCallsLeas"></span>
                 <div id="dvTotalRecordsRowLeas" class="row">
                     <div class="col">
-                        Total API Calls: <span id="spTotalRecordsLeas">@(leaResponseData.Pages.Count)</span>
+                        Total API Calls: <span id="spTotalRecordsLeas">@(Model.Pages.Count)</span>
                     </div>
                 </div>
                 <div id="dvTotalRecordsRowLeas" class="row">
                     <div class="col">
-                        Total Records Returned: <span id="spTotalRecordsLeas">@(leaResponseData.FullDataSet.Count)</span>
+                        Total Records Returned: <span id="spTotalRecordsLeas">@(Model.FullDataSet.Count)</span>
                     </div>
                 </div>
-                <input id="btnCallDetailsLeas" class="btn btn-link btn-xs pb-2 ml-2" type="button" data-toggle="collapse" data-target="#dvCallDetailsLeas" aria-expanded="false" aria-controls="collapseExample" value="Show call details">
             </div>
-            <div id="dvCallDetailsLeas" class="collapse mt-1">
-                <ul id="ulResultsLeas" class="list-group">
-                    @for (int i = 0; i < leaResponseData.Pages.Count; i++)
-                    {
-                        <li class="list-group-item">
-                            <div>Page @(i+1)  - Records Returned-@(leaResponseData.Pages[i].Data.Count).</div>
-                            <div>Url:@(leaResponseData.Pages[i].ResponseUri.OriginalString)</div>
-                        </li>
-                    }
-                </ul>
+            <div>
+                <table>
+                    <tr class="parentrow">
+                        <td style="text-align:justify">
+                            <span class="sign btn btn-outline-primary" style="margin-right: 5px">Call Details </span>
+                        </td>
+                    </tr>
+                    <tr class="childContent">
+                        <td colspan="8">
+                            <table class="footable-details table table-striped table-hover table-bordered table-responsive">
+                                <tbody>
+                                <tr><td><div style="max-height: 120px; overflow-y: scroll">
+                                        <ul id="ulResultsLeas" class="list-group">
+                                            @for (int i = 0; i < Model.Pages.Count; i++)
+                                            {
+                                                <li class="list-group-item">
+                                                    <div>Page @(i+1)  - Records Returned-@(Model.Pages[i].Data.Count).</div>
+                                                    <div>Url:@(Model.Pages[i].ResponseUri.OriginalString)</div>
+                                                </li>
+                                            }
+                                        </ul></div>
+                                </td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             </div>
+            <div><table>
+            <tr class="parentrow">
+                <td style="text-align:justify">
+                    <span class="sign btn btn-outline-primary" style="margin-right: 5px">Full Content </span>
+                </td>
+            </tr>
+                <tr class="childContent">
+                    <td colspan="8">
+                        <table class="footable-details table table-striped table-hover table-bordered table-responsive">
+                            <tbody>
+                            <tr><td><div style="max-height: 120px; overflow-y: scroll">@Model.ResponseData</div></td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </table></div>
         </div>
     </div>
 }
@@ -50,54 +81,47 @@ Load / Reload
     Current Local Education Agencies Saved
     <table class="table">
         <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.LocalEducationAgencyId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.NameOfInstitution)
-                </th>
-                <th>
-                    Api Resource Id
-                </th>
-            </tr>
+        <tr>
+            <th>
+                Local Education Agency Id
+            </th>
+            <th>
+                Name Of Institution
+            </th>
+            <th>
+                Api Resource Id
+            </th>
+            <th>Json Payload</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.LocalEducationAgencyId)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NameOfInstitution)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Id)
-                    </td>
-                </tr>
-            }
+        @foreach (var item in Model.FullDataSet)
+        {
+            <tr class="parentrow">
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocalEducationAgencyId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameOfInstitution)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td style="text-align:justify">
+                    <span class="sign btn btn-outline-primary" style="margin-right: 5px"></span>
+                </td>
+            </tr>
+            <tr class="childContent">
+                <td colspan="8">
+                    <table class="footable-details table table-striped table-hover table-bordered table-responsive">
+                        <tbody>
+                        <tr><td id="jsondata"><div style="max-height:120px; overflow-y: scroll">@item.ToJson()</div></td></tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 
 </form>
-
-
-@section Scripts {
-    <script type="text/javascript">
-        $(document).ready(DocumentReadyActivities);
-
-        function DocumentReadyActivities() {
-            $("[id^='btnCallDetails']").on('click', function () {
-                var text = $(this).val();
-                if (text === "Show call details") {
-                    $(this).val('Hide call details');
-                } else {
-                    $(this).val('Show call details');
-                }
-            });
-        }
-    </script>
-}
-
-
