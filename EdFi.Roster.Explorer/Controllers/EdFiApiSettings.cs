@@ -1,7 +1,8 @@
 ﻿using EdFi.Roster.Sdk.Models;
-using EdFi.Roster.Services;
+using EdFi.Roster.Sdk.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ApiSettingsService = EdFi.Roster.Services.ApiSettingsService;
 
 namespace EdFi.Roster.Explorer.Controllers
 {
