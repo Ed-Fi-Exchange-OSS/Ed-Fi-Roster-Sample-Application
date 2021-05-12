@@ -90,8 +90,8 @@ OpenAPI spec version: 3
     <Compile Include="Api.EnrollmentComposites\StaffsApi.cs" />
     <Compile Include="Api.EnrollmentComposites\StudentsApi.cs" />
     <Compile Include="Client\ApiClient.cs" />
-    <Compile Include="Client\ApiClient.InterceptRequest.cs" />
-    <Compile Include="Client\ApiClient.InterceptResponse.cs" />
+    <Compile Include="Customizations\ApiClient.InterceptRequest.cs" />
+    <Compile Include="Customizations\ApiClient.InterceptResponse.cs" />
     <Compile Include="Client\ApiException.cs" />
     <Compile Include="Client\ApiResponse.cs" />
     <Compile Include="Client\Configuration.cs" />
