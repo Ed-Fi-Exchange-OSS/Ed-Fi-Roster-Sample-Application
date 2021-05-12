@@ -74,7 +74,13 @@
         var parent = $(this).closest("tr");
         parent.toggleClass('expand').nextUntil('tr.parentrow').slideToggle(100);
     };
+    var prettifyContent = function() {
+        var content = JSON.stringify($(this).InnerHTML(),undefined,4);
+        $(this).InnerHTML(content);
+    };
     $(document).on('click', '.sign', expand);
+    $(document).on('click', '.collapsible', expand);
+    $(document).on('load', '.prettify', prettifyContent);
 </script>
 </body>
 </html>

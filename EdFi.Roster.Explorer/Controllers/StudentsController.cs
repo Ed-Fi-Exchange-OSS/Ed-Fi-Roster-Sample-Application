@@ -5,7 +5,6 @@ using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace EdFi.Roster.Explorer.Controllers
 {
@@ -30,7 +29,6 @@ namespace EdFi.Roster.Explorer.Controllers
             var response = await _studentService.GetAllStudentsWithExtendedInfoAsync();
             await _studentService.Save(response.FullDataSet);
             response.IsExtendedInfoAvailable = true;
-            response.ResponseData = JsonConvert.SerializeObject(response.FullDataSet);
             return View("Index", response);
         }
     }

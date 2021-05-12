@@ -90,3 +90,18 @@ body {
 .parentrow.expand .sign:after {
     content: "Hide";
 }
+
+.parentrow .collapsible:after {
+    display: inline-block;
+}
+
+.jsoncontainer {
+    max-height: 120px;
+    overflow-y: scroll;
+    width: 100%;
+    overflow-x: auto;
+}
+.contenttbody {
+    width: 100%;
+    display: table;
+}

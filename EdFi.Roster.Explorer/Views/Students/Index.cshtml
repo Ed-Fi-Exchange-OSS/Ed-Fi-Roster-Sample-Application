@@ -13,73 +13,7 @@ Load / Reload
 <div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadStudents")'">Get Students</button></div>
 @if (Model.IsExtendedInfoAvailable)
 {
-    <div id="dvResultsRow" class="row">
-        <div class="col">
-            <div>
-                <span id="spTotalCalls"></span>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total API Calls: <span id="spTotalRecords">@(Model.Pages.Count)</span>
-                    </div>
-                </div>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total Records Returned: <span id="spTotalRecords">@(Model.FullDataSet.Count)</span>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <table>
-                    <tr class="parentrow">
-                        <td style="text-align:justify">
-                            <span class="sign btn btn-outline-primary" style="margin-right: 5px">Call Details </span>
-                        </td>
-                    </tr>
-                    <tr class="childContent">
-                        <td colspan="8">
-                            <table class="footable-details table table-striped table-hover table-bordered table-responsive">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div style="max-height: 120px; overflow-y: scroll">
-                                                <ul id="ulResultsLeas" class="list-group">
-                                                    @for (int i = 0; i < Model.Pages.Count; i++)
-                                                    {
-                                                        <li class="list-group-item">
-                                                            <div>Page @(i+1)  - Records Returned-@(Model.Pages[i].Data.Count).</div>
-                                                            <div>Url:@(Model.Pages[i].ResponseUri.OriginalString)</div>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div>
-                <table>
-                    <tr class="parentrow">
-                        <td style="text-align:justify">
-                            <span class="sign btn btn-outline-primary" style="margin-right: 5px">Full Content </span>
-                        </td>
-                    </tr>
-                    <tr class="childContent">
-                        <td colspan="8">
-                            <table class="footable-details table table-striped table-hover table-bordered table-responsive">
-                                <tbody>
-                                    <tr><td><div style="max-height: 120px; overflow-y: scroll">@Model.ResponseData</div></td></tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+    await Html.RenderPartialAsync("_ExtendedInfoResponsePage", Model.GeneralInfo);
 }
 <hr />
 <form>
@@ -95,37 +29,35 @@ Load / Reload
             </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.FullDataSet)
-        {
-            <tr class="parentrow">
-                <td>
-                    @Html.DisplayFor(modelItem => item.StudentUniqueId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.LastSurname)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td style="text-align: justify">
-                    <span class="sign btn btn-outline-primary" style="margin-right: 5px"></span>
-                </td>
-            </tr>
-            <tr class="childContent">
-                <td colspan="8">
-                    <table class="footable-details table table-striped table-hover table-bordered table-responsive">
-                        <tbody>
-                        <tr>
-                            <td id="jsondata">
-                                <div style="max-height: 120px; overflow-y: scroll">@item.ToJson()</div></td></tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        }
+            @foreach (var item in Model.FullDataSet)
+            {
+                <tr class="parentrow">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StudentUniqueId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LastSurname)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td style="text-align: justify">
+                        <span class="sign btn btn-outline-primary" style="margin-right: 5px"></span>
+                    </td>
+                </tr>
+                <tr class="childContent">
+                    <td colspan="12">
+                        <table class="table table-striped table-hover table-bordered table-responsive">
+                            <tbody class="contenttbody">
+                                <tr><td><pre class="jsoncontainer prettify">@item.ToJson()</pre></td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </form>

@@ -35,7 +35,7 @@ namespace EdFi.Roster.Explorer.Controllers
         { 
             var response = await _localEducationAgencyService.GetAllLocalEducationAgenciesWithExtendedInfoAsync();
             await _localEducationAgencyService.Save(response.FullDataSet);
-            return Ok(response);
+            return Ok(response.GeneralInfo);
         }
 
         [HttpGet("GetSchoolsAsync")]
@@ -43,7 +43,7 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             var response = await _schoolService.GetAllSchoolsWithExtendedInfoAsync();
             await _schoolService.Save(response.FullDataSet);
-            return Ok(response);
+            return Ok(response.GeneralInfo);
         }
 
         [HttpGet("GetSectionsAsync")]
@@ -51,7 +51,7 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             var response = await _sectionService.GetAllSectionsWithExtendedInfoAsync();
             await _sectionService.Save(response.FullDataSet);
-            return Ok(response);
+            return Ok(response.GeneralInfo);
         }
 
         [HttpGet("GetStaffAsync")]
@@ -59,7 +59,7 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             var response = await _staffService.GetAllStaffWithExtendedInfoAsync();
             await _staffService.Save(response.FullDataSet);
-            return Ok(response);
+            return Ok(response.GeneralInfo);
         }
 
         [HttpGet("GetStudentsAsync")]
@@ -67,7 +67,7 @@ namespace EdFi.Roster.Explorer.Controllers
         {
             var response = await _studentService.GetAllStudentsWithExtendedInfoAsync();
             await _studentService.Save(response.FullDataSet);
-            return Ok(response);
+            return Ok(response.GeneralInfo);
         }
 
     }
