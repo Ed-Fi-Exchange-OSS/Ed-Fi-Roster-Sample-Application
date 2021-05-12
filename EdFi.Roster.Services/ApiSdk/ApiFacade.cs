@@ -1,23 +1,33 @@
 ﻿using System;
+using EdFi.Roster.Sdk.Client;
+using EdFi.Roster.Sdk.Services;
 
 namespace EdFi.Roster.Services.ApiSdk
 {
     public class ApiFacade
     {
-        private readonly string url;
+        private readonly Configuration configuration;
 
         public ApiFacade()
         {
             var settingsService = new ApiSettingsService();
             var apiSettings = settingsService.Read();
-            url = ApiFacade.Combine(apiSettings.RootUrl, "composites/v1");
+            var url = ApiFacade.Combine(apiSettings.RootUrl, "composites/v1");
+            var tokenService = new BearerTokenService();
+            var accessToken = tokenService.GetBearerToken();
+            
+            configuration = new Configuration
+            {
+                AccessToken = accessToken,
+                BasePath = url
+            };
         }
 
         public EdFi.Roster.Sdk.Api.EnrollmentComposites.ILocalEducationAgenciesApi LocalEducationAgenciesApi
         {
             get
             {
-                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.LocalEducationAgenciesApi(this.url);
+                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.LocalEducationAgenciesApi(this.configuration);
             }
         }
 
@@ -25,7 +35,7 @@ namespace EdFi.Roster.Services.ApiSdk
         {
             get
             {
-                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.SchoolsApi(this.url);
+                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.SchoolsApi(this.configuration);
             }
         }
 
@@ -33,7 +43,7 @@ namespace EdFi.Roster.Services.ApiSdk
         {
             get
             {
-                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.StaffsApi(this.url);
+                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.StaffsApi(this.configuration);
             }
         }
 
@@ -41,7 +51,7 @@ namespace EdFi.Roster.Services.ApiSdk
         {
             get
             {
-                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.StudentsApi(this.url);
+                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.StudentsApi(this.configuration);
             }
         }
 
@@ -49,7 +59,7 @@ namespace EdFi.Roster.Services.ApiSdk
         {
             get
             {
-                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.SectionsApi(this.url);
+                return new EdFi.Roster.Sdk.Api.EnrollmentComposites.SectionsApi(this.configuration);
             }
         }
 

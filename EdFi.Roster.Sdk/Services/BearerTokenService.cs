@@ -77,5 +77,18 @@ namespace EdFi.Roster.Sdk.Services
             GetNewBearerTokenResponse();
             return dataService.Read<BearerTokenInformation>();
         }
+
+        public string GetBearerToken()
+        {
+            var tokenInfo = GetBearerTokenInformation();
+            var accessToken = tokenInfo.AccessToken;
+            if (tokenInfo.DateTimeCreated.AddSeconds(tokenInfo.ExpiresIn - 120).CompareTo(DateTime.Now) < 0)
+            {
+                //get new token
+                accessToken = GetNewBearerToken();
+            }
+
+            return accessToken;
+        }
     }
 }
