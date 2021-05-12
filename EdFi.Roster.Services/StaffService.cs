@@ -42,14 +42,17 @@ namespace EdFi.Roster.Services
                 var currResponse = await api.GetStaffsAsyncWithHttpInfo(offset, limit);
                 currResponseRecordCount = currResponse.Data.Count;
                 offset += limit;
-                var responsePage = new ExtendedInfoResponsePage<List<Staff>>
+                var responsePage = new ExtendedInfoResponsePage
                 {
-                    Data = currResponse.Data,
+                    RecordsCount = currResponse.Data.Count,
                     ResponseUri = currResponse.ResponseUri
                 };
-                response.Pages.Add(responsePage);
+                response.GeneralInfo.Pages.Add(responsePage);
                 response.FullDataSet.AddRange(currResponse.Data);
             } while (currResponseRecordCount >= limit);
+
+            response.GeneralInfo.TotalRecords = response.FullDataSet.Count;
+            response.GeneralInfo.ResponseData = JsonConvert.SerializeObject(response.FullDataSet, Formatting.Indented);
             return response;
         }
     }
