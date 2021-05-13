@@ -1,9 +1,7 @@
-﻿@model IEnumerable<EdFi.Roster.Sdk.Models.EnrollmentComposites.Section>
+﻿@model ExtendedInfoResponse<List<Section>>
 
 @{
     ViewData["Title"] = "Sections";
-    var sectionResponseData = (ExtendedInfoResponse<List<Section>>)ViewData["sectionExtendedResponseInfo"];
-
 }
 
 <h1>Sections</h1>
@@ -15,62 +13,27 @@ Load / Reload
 
 <div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadSections")'">Get Sections</button></div>
 
-@if (sectionResponseData != null)
+@if (Model.IsExtendedInfoAvailable)
 {
-    <div id="dvResultsRow" class="row">
-        <div class="col">
-            <div>
-                <span id="spTotalCalls"></span>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total API Calls: <span id="spTotalRecords">@(sectionResponseData.Pages.Count)</span>
-                    </div>
-                </div>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total Records Returned: <span id="spTotalRecords">@(sectionResponseData.FullDataSet.Count)</span>
-                    </div>
-                </div>
-                <input id="btnCallDetails" class="btn btn-link btn-xs pb-2 ml-2" type="button" data-toggle="collapse" data-target="#dvCallDetails" aria-expanded="false" aria-controls="collapseExample" value="Show call details">
-            </div>
-            <div id="dvCallDetails" class="collapse mt-1">
-                <ul id="ulResults" class="list-group">
-                    @for (int i = 0; i < sectionResponseData.Pages.Count; i++)
-                    {
-                        <li class="list-group-item">
-                            <div>Page @(i+1)  - Records Returned-@(sectionResponseData.Pages[i].Data.Count).</div>
-                            <div>Url:@(sectionResponseData.Pages[i].ResponseUri.OriginalString)</div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
+    await Html.RenderPartialAsync("_ExtendedInfoResponsePage", Model.GeneralInfo);
 }
 <hr />
 <form>
-    Current Sections Saved (@Model.Count() Records)
+    Current Sections Saved (@Model.FullDataSet.Count Records)
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.LocalCourseCode)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SectionIdentifier)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LocalCourseTitle)
-                </th>
-                <th>
-                    Api Resource Id
-                </th>
+                <th>Local Course Code</th>
+                <th>SectionIdentifier</th>
+                <th>Local Course Title</th>
+                <th>Api Resource Id</th>
+                <th>Json Payload</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.FullDataSet)
             {
-                <tr>
+                <tr class="parent-row">
                     <td>
                         @Html.DisplayFor(modelItem => item.LocalCourseCode)
                     </td>
@@ -82,6 +45,18 @@ Load / Reload
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td style="text-align:justify">
+                        <span class="sign btn btn-outline-primary" style="margin-right: 5px"></span>
+                    </td>
+                </tr>
+                <tr class="child-content">
+                    <td colspan="12">
+                        <table class="table table-striped table-hover table-bordered table-responsive">
+                            <tbody class="content-tbody">
+                            <tr><td><pre class="json-container prettify">@item.ToJson()</pre></td></tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
             }
