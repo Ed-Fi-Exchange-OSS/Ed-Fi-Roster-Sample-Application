@@ -72,7 +72,7 @@
     var expand = function(event) {
         event.preventDefault();
         var parent = $(this).closest("tr");
-        parent.toggleClass('expand').nextUntil('tr.parentrow').slideToggle(100);
+        parent.toggleClass('expand').nextUntil('tr.parent-row').slideToggle(100);
     };
     var prettifyContent = function() {
         var content = JSON.stringify($(this).InnerHTML(),undefined,4);

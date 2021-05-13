@@ -78,30 +78,30 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
-.parentrow .sign:after {
+.parent-row .sign:after {
     content: "Show";
     display: inline-block;
 }
 
-.childContent {
+.child-content {
     display: none
 }
 
-.parentrow.expand .sign:after {
+.parent-row.expand .sign:after {
     content: "Hide";
 }
 
-.parentrow .collapsible:after {
+.parent-row .collapsible:after {
     display: inline-block;
 }
 
-.jsoncontainer {
+.json-container {
     max-height: 120px;
     overflow-y: scroll;
     width: 100%;
     overflow-x: auto;
 }
-.contenttbody {
+.content-tbody {
     width: 100%;
     display: table;
 }
