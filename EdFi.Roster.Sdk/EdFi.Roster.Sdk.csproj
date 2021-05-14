@@ -131,9 +131,6 @@ OpenAPI spec version: 3
     <Compile Include="Models.EnrollmentComposites\StudentStudentEducationOrganizationAssociationStudentEducationOrganizationAssociationRace.cs" />
     <Compile Include="Models.EnrollmentComposites\StudentStudentSchoolAssociation.cs" />
     <Compile Include="Models\ApiLogEntry.cs" />
-    <Compile Include="Models\ApiSettings.cs" />
-    <Compile Include="Models\BearerToken.cs" />
-    <Compile Include="Models\BearerTokenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApiLogService.cs" />
     <Compile Include="Services\ApiSettingsService.cs" />

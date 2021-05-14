@@ -1,5 +1,5 @@
 ﻿
-namespace EdFi.Roster.Sdk.Models
+namespace EdFi.Roster.Models
 {
     public class ApiSettings
     {
