@@ -1,12 +1,13 @@
-﻿using EdFi.Roster.Sdk.Client;
-using EdFi.Roster.Sdk.Data;
-using EdFi.Roster.Sdk.Models;
-using RestSharp;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
+using EdFi.Roster.Models;
+using EdFi.Roster.Sdk.Client;
+using EdFi.Roster.Sdk.Models;
+using EdFi.Roster.Sdk.Services;
+using RestSharp;
 
-namespace EdFi.Roster.Sdk.Services
+namespace EdFi.Roster.Services
 {
     public class BearerTokenService
     {
@@ -15,7 +16,7 @@ namespace EdFi.Roster.Sdk.Services
         public BearerTokenService()
         {
             apiSettings = new ApiSettingsService().Read();
-            dataService = new Sdk.Data.JsonDataFileService();
+            dataService = new JsonDataFileService();
         }
 
         public string GetNewBearerToken()

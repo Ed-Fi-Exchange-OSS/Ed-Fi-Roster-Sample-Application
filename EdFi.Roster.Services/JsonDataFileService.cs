@@ -1,12 +1,10 @@
-﻿
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using Newtonsoft.Json;
 
-namespace EdFi.Roster.Sdk.Data
+namespace EdFi.Roster.Services
 {
     public interface IDataService
     {
