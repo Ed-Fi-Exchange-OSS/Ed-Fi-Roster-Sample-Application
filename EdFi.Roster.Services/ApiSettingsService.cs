@@ -1,18 +1,24 @@
-﻿using EdFi.Roster.Sdk.Models;
+﻿using EdFi.Roster.Models;
 
 namespace EdFi.Roster.Services
 {
     public class ApiSettingsService
     {
-        //this is pretty much a pass through so that the web/Explorer project does not have to reference the sdk directly
+        private IDataService _dataService;
+
+        public ApiSettingsService()
+        {
+            _dataService = new JsonDataFileService();
+        }
+
         public void Save(ApiSettings apiSettings)
         {
-            new EdFi.Roster.Sdk.Services.ApiSettingsService().Save(apiSettings);
+            _dataService.Save(apiSettings);
         }
 
         public ApiSettings Read()
         {
-            var sdkModel = new EdFi.Roster.Sdk.Services.ApiSettingsService().Read();
+            var sdkModel = _dataService.Read<ApiSettings>();
             return new ApiSettings { Key = sdkModel.Key, RootUrl = sdkModel.RootUrl, Secret = sdkModel.Secret };
         }
     }
