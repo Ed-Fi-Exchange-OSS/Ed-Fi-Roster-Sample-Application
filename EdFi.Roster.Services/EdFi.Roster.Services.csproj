@@ -10,6 +10,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="RestSharp" Version="105.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\EdFi.Roster.Models\EdFi.Roster.Models.csproj" />
     <ProjectReference Include="..\EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj" />
   </ItemGroup>

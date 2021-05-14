@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Client;
-using EdFi.Roster.Sdk.Models;
 using EdFi.Roster.Sdk.Services;
 using RestSharp;
 
