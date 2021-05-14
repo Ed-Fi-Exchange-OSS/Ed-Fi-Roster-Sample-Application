@@ -219,12 +219,12 @@
                     id: 'li' + resultsName + 'Page' + (i + 1),
                     class: 'list-group-item'
                 });
-                $('<div>', { id: 'div' + resultsName + 'Page' + (i + 1) + 'Records' }).text('Page ' + (i + 1) + ' - Records Returned-' + item.data.length + '.').appendTo(newLi);
+                $('<div>', { id: 'div' + resultsName + 'Page' + (i + 1) + 'Records' }).text('Page ' + (i + 1) + ' - Records Returned-' + item.recordsCount + '.').appendTo(newLi);
                 $('<div>', { id: 'li' + resultsName + 'Page' + (i + 1) + 'Url' }).text('Url: ' + item.responseUri).appendTo(newLi);
                 newLi.appendTo(ulResults);
             });
             $('#spTotalCalls' + resultsName).text('Total API Calls: ' + response.pages.length);
-            spTotalRecords.text(response.fullDataSet.length);
+            spTotalRecords.text(response.totalRecords);
             dvTotalRecordsRow.collapse('show');
             dvResultsRow.collapse('show');
             $('#dvLoading' + resultsName).collapse('hide');

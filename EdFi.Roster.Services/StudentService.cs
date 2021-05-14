@@ -1,29 +1,32 @@
-﻿using EdFi.Roster.Data;
-using EdFi.Roster.Models;
+﻿using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
 {
     public class StudentService
     {
-        private readonly IDataService _dataService;
+        private readonly IRosterDataService _dataService;
 
-        public StudentService(IDataService dataService)
+        public StudentService(IRosterDataService dataService)
         {
             _dataService = dataService;
         }
 
         public async Task<IEnumerable<Student>> ReadAllAsync()
         {
-            return await _dataService.ReadAsync<List<Student>>();
+            var students = await _dataService.ReadAllAsync<RosterStudent>();
+            return students.Select(st => JsonConvert.DeserializeObject<Student>(st.Content)).ToList();
         }
 
-        public void Save(List<Student> students)
+        public async Task Save(List<Student> students)
         {
-            _dataService.SaveAsync(students);
+            var studentList = students.Select(JsonConvert.SerializeObject)
+                .Select(content => new RosterStudent { Content = content }).ToList();
+            await _dataService.SaveAsync(studentList);
         }
 
         public async Task<ExtendedInfoResponse<List<Student>>> GetAllStudentsWithExtendedInfoAsync()
@@ -39,16 +42,17 @@ namespace EdFi.Roster.Services
                 var currResponse = await api.GetStudentsAsyncWithHttpInfo(offset, limit);
                 currResponseRecordCount = currResponse.Data.Count;
                 offset += limit;
-                var responsePage = new ExtendedInfoResponsePage<List<Student>>
+                var responsePage = new ExtendedInfoResponsePage
                 {
-                    Data = currResponse.Data,
+                    RecordsCount = currResponse.Data.Count,
                     ResponseUri = currResponse.ResponseUri
                 };
-                response.Pages.Add(responsePage);
+                response.GeneralInfo.Pages.Add(responsePage);
                 response.FullDataSet.AddRange(currResponse.Data);
             } while (currResponseRecordCount >= limit);
 
-            var distinctSectionIds = response.FullDataSet.Select(x => x.Id).Distinct();
+            response.GeneralInfo.TotalRecords = response.FullDataSet.Count;
+            response.GeneralInfo.ResponseData = JsonConvert.SerializeObject(response.FullDataSet, Formatting.Indented);
             return response;
         }
     }

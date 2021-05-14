@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
-using EdFi.Roster.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EdFi.Roster.Models;
+using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,21 +10,26 @@ namespace EdFi.Roster.Explorer.Controllers
 {
     public class StudentsController : Controller
     {
-        private readonly StudentService studentService;
-        public StudentsController()
+        private readonly StudentService _studentService;
+        public StudentsController(StudentService studentService)
         {
-            studentService = new StudentService(new JsonFileDataService());
+            _studentService = studentService;
         }
         public async Task<IActionResult> Index()
         {
-            return View(await studentService.ReadAllAsync());
+            var students = await _studentService.ReadAllAsync();
+            return View(new ExtendedInfoResponse<List<Student>>
+            {
+                FullDataSet = students.ToList(),
+                IsExtendedInfoAvailable = false
+            });
         }
         public async Task<IActionResult> LoadStudents()
         {
-            var response = await studentService.GetAllStudentsWithExtendedInfoAsync();
-            studentService.Save(response.FullDataSet);
-            ViewData["studentExtendedResponseInfo"] = response;
-            return View("Index", response.FullDataSet);
+            var response = await _studentService.GetAllStudentsWithExtendedInfoAsync();
+            await _studentService.Save(response.FullDataSet);
+            response.IsExtendedInfoAvailable = true;
+            return View("Index", response);
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
-using EdFi.Roster.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EdFi.Roster.Models;
+using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,24 +10,30 @@ namespace EdFi.Roster.Explorer.Controllers
 {
     public class LocalEducationAgenciesController : Controller
     {
-        private readonly LocalEducationAgencyService localEducationAgencyService;
+        private readonly LocalEducationAgencyService _localEducationAgencyService;
 
-        public LocalEducationAgenciesController()
+        public LocalEducationAgenciesController(LocalEducationAgencyService localEducationAgencyService)
         {
-            this.localEducationAgencyService = new LocalEducationAgencyService(new JsonFileDataService());
+            _localEducationAgencyService = localEducationAgencyService;
         }
+
         public async Task<IActionResult> Index()
         {
             //Read any saved LEAs to be displayed
-            return View(await localEducationAgencyService.ReadAllAsync());
+            var leaList = await _localEducationAgencyService.ReadAllAsync();
+            return View(new ExtendedInfoResponse<List<LocalEducationAgency>>
+            {
+                FullDataSet = leaList.ToList(), 
+                IsExtendedInfoAvailable = false
+            }); 
         }
 
         public async Task<IActionResult> LoadLeas()
         {
-            var response = await localEducationAgencyService.GetAllLocalEducationAgenciesWithExtendedInfoAsync();
-            localEducationAgencyService.Save(response.FullDataSet);
-            ViewData["leaExtendedResponseInfo"] = response;
-            return View("Index", response.FullDataSet);
+            var response = await _localEducationAgencyService.GetAllLocalEducationAgenciesWithExtendedInfoAsync();
+            await _localEducationAgencyService.Save(response.FullDataSet);
+            response.IsExtendedInfoAvailable = true;
+            return View("Index", response);
         }
     }
 }

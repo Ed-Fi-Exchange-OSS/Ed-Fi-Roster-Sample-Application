@@ -1,8 +1,7 @@
-﻿@model IEnumerable<EdFi.Roster.Sdk.Models.EnrollmentComposites.Staff>
+﻿@model ExtendedInfoResponse<List<Staff>>
 
 @{
     ViewData["Title"] = "Staff";
-    var staffResponseData = (ExtendedInfoResponse<List<Staff>>)ViewData["staffExtendedResponseInfo"];
 }
 
 <h1>Staff</h1>
@@ -13,65 +12,28 @@ Load / Reload
 <p> Get Staff From Ed - Fi Api (This will overwrite the currently stored staff records)</p>
 <div><button class="btn btn-primary btn" onclick="document.location.href='@Url.Action("LoadStaff")'">Get Staff</button></div>
 
-@if (staffResponseData != null)
+@if (Model.IsExtendedInfoAvailable)
 {
-    <div id="dvResultsRow" class="row">
-        <div class="col">
-            <div>
-                <span id="spTotalCalls"></span>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total API Calls: <span id="spTotalRecords">@(staffResponseData.Pages.Count)</span>
-                    </div>
-                </div>
-                <div id="dvTotalRecordsRow" class="row">
-                    <div class="col">
-                        Total Records Returned: <span id="spTotalRecords">@(staffResponseData.FullDataSet.Count)</span>
-                    </div>
-                </div>
-                <input id="btnCallDetails" class="btn btn-link btn-xs pb-2 ml-2" type="button" data-toggle="collapse" data-target="#dvCallDetails" aria-expanded="false" aria-controls="collapseExample" value="Show call details">
-            </div>
-            <div id="dvCallDetails" class="collapse mt-1">
-                <ul id="ulResults" class="list-group">
-                    @for (int i = 0; i < staffResponseData.Pages.Count; i++)
-                    {
-                        <li class="list-group-item">
-                            <div>Page @(i+1)  - Records Returned-@(staffResponseData.Pages[i].Data.Count).</div>
-                            <div>Url:@(staffResponseData.Pages[i].ResponseUri.OriginalString)</div>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
+    await Html.RenderPartialAsync("_ExtendedInfoResponsePage", Model.GeneralInfo);
 }
 <hr />
 <form>
-    Current Staff Saved (@Model.Count() Records)
+    Current Staff Saved (@Model.FullDataSet.Count Records)
     <table class="table">
         <thead>
             <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.StaffUniqueId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FirstName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.LastSurname)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.EducationOrganizationAssignments[0].StaffClassificationDescriptor)
-                </th>
-                <th>
-                    Api Resource Id
-                </th>
+                <th>Staff UniqueId</th>
+                <th>First Name</th>
+                <th>Last Surname</th>
+                <th>Staff Classification</th>
+                <th>Api Resource Id</th>
+                <th>Json Payload</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.FullDataSet)
             {
-                <tr>
+                <tr class="parent-row">
                     <td>
                         @Html.DisplayFor(modelItem => item.StaffUniqueId)
                     </td>
@@ -84,13 +46,25 @@ Load / Reload
                     <td>
                         @{
                             var tempDescriptor = item.EducationOrganizationAssignments[0].StaffClassificationDescriptor;
-                            tempDescriptor = tempDescriptor.Substring(tempDescriptor.IndexOf("#") + 1);
+                            tempDescriptor = tempDescriptor.Substring(tempDescriptor.IndexOf("#", StringComparison.InvariantCulture) + 1);
                         }
 
                         @Html.DisplayFor(modelItem => tempDescriptor)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td style="text-align:justify">
+                        <span class="sign btn btn-outline-primary" style="margin-right: 5px"></span>
+                    </td>
+                </tr>
+                <tr class="child-content">
+                    <td colspan="12">
+                        <table class="table table-striped table-hover table-bordered table-responsive">
+                            <tbody class="content-tbody">
+                                <tr><td><pre class="json-container prettify">@item.ToJson()</pre></td></tr>
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
             }
