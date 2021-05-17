@@ -90,8 +90,7 @@ OpenAPI spec version: 3
     <Compile Include="Api.EnrollmentComposites\StaffsApi.cs" />
     <Compile Include="Api.EnrollmentComposites\StudentsApi.cs" />
     <Compile Include="Client\ApiClient.cs" />
-    <Compile Include="Client\ApiClient.InterceptRequest.cs" />
-    <Compile Include="Client\ApiClient.InterceptResponse.cs" />
+    <Compile Include="Customizations\ApiClient.InterceptResponse.cs" />
     <Compile Include="Client\ApiException.cs" />
     <Compile Include="Client\ApiResponse.cs" />
     <Compile Include="Client\Configuration.cs" />
@@ -100,7 +99,6 @@ OpenAPI spec version: 3
     <Compile Include="Client\IApiAccessor.cs" />
     <Compile Include="Client\IReadableConfiguration.cs" />
     <Compile Include="Client\SwaggerDateConverter.cs" />
-    <Compile Include="Data\JsonDataFileService.cs" />
     <Compile Include="Models.EnrollmentComposites\Link.cs" />
     <Compile Include="Models.EnrollmentComposites\LocalEducationAgency.cs" />
     <Compile Include="Models.EnrollmentComposites\LocalEducationAgencyEducationOrganizationAddress.cs" />
@@ -133,13 +131,8 @@ OpenAPI spec version: 3
     <Compile Include="Models.EnrollmentComposites\StudentStudentEducationOrganizationAssociationStudentEducationOrganizationAssociationRace.cs" />
     <Compile Include="Models.EnrollmentComposites\StudentStudentSchoolAssociation.cs" />
     <Compile Include="Models\ApiLogEntry.cs" />
-    <Compile Include="Models\ApiSettings.cs" />
-    <Compile Include="Models\BearerToken.cs" />
-    <Compile Include="Models\BearerTokenResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ApiLogService.cs" />
-    <Compile Include="Services\ApiSettingsService.cs" />
-    <Compile Include="Services\BearerTokenService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
