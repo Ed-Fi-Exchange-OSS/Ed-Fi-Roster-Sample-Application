@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Services", "EdF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Models", "EdFi.Roster.Models\EdFi.Roster.Models.csproj", "{00506D24-8278-409A-A0CA-75A7715F341E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdFi.Roster.Data", "EdFi.Roster.Data\EdFi.Roster.Data.csproj", "{53A519A1-015C-49C9-956B-164D8BDA50BB}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Sdk", "EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj", "{10FAC0AC-CF4D-4BB1-9F6F-E2754FA30EC1}"
 EndProject
 Global

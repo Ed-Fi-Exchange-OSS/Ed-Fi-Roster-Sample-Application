@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EdFi.Roster.Services.Migrations
+namespace EdFi.Roster.Data.Migrations
 {
     public partial class CreateRosterTables : Migration
     {
