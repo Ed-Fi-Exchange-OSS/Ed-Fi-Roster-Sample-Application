@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Client;
 using RestSharp;
@@ -9,30 +11,14 @@ namespace EdFi.Roster.Services
 {
     public class BearerTokenService
     {
-        private ApiSettings apiSettings;
-        private readonly IDataService dataService;
-        public BearerTokenService()
+        private readonly IRosterDataService _dataService;
+
+        public BearerTokenService(IRosterDataService dataService)
         {
-            apiSettings = new ApiSettingsService().Read();
-            dataService = new JsonDataFileService();
+            _dataService = dataService;
         }
 
-        public string GetNewBearerToken()
-        {
-            return GetNewBearerTokenResponse().Data.AccessToken;
-        }
-        public ApiResponse<BearerTokenResponse> GetNewBearerTokenResponse(string url, string key, string secret)
-        {
-            this.apiSettings = new ApiSettings
-            {
-                RootUrl = url,
-                Key = key,
-                Secret = secret
-            };
-            return GetNewBearerTokenResponse();
-        }
-
-        public ApiResponse<BearerTokenResponse> GetNewBearerTokenResponse()
+        public async Task<ApiResponse<BearerTokenResponse>> GetNewBearerTokenResponse(ApiSettings apiSettings)
         {
             var oauthClient = new RestClient(apiSettings.RootUrl);
             var bearerTokenRequest = new RestRequest("oauth/token", Method.POST);
@@ -51,11 +37,14 @@ namespace EdFi.Roster.Services
             // new ApiLogService().WriteLog(oauthClient, bearerTokenRequest, bearerTokenResponse);
 
             //save token info
-            dataService.Save(new BearerTokenInformation
+            await _dataService.SaveAsync(new List<BearerTokenInformation>
             {
-                DateTimeCreated = DateTime.Now,
-                ExpiresIn = bearerTokenResponse.Data.ExpiresIn,
-                AccessToken = bearerTokenResponse.Data.AccessToken
+                new BearerTokenInformation
+                {
+                    DateTimeCreated = DateTime.Now,
+                    ExpiresIn = bearerTokenResponse.Data.ExpiresIn,
+                    AccessToken = bearerTokenResponse.Data.AccessToken
+                }
             });
 
             var headersMap = new Multimap<string, string>();
@@ -71,29 +60,22 @@ namespace EdFi.Roster.Services
                 (BearerTokenResponse)bearerTokenResponse.Data,
                 bearerTokenResponse.ResponseUri);
         }
-        public BearerTokenInformation GetBearerTokenInformation()
+        
+        public async Task<string> GetBearerToken(ApiSettings apiSettings)
         {
-            //check for existing and return if exists
-            var bearerTokenInfo = dataService.Read<BearerTokenInformation>();
-            if (!string.IsNullOrEmpty(bearerTokenInfo.AccessToken))
-                return bearerTokenInfo;
-
-            //if here, no access token existed
-            //GetBearerToken new if no existing
-            GetNewBearerTokenResponse();
-            return dataService.Read<BearerTokenInformation>();
-        }
-
-        public string GetBearerToken()
-        {
-            var tokenInfo = GetBearerTokenInformation();
-            var accessToken = tokenInfo.AccessToken;
-            if (tokenInfo.DateTimeCreated.AddSeconds(tokenInfo.ExpiresIn - 120).CompareTo(DateTime.Now) < 0)
+            var bearerTokens = await _dataService.ReadAllAsync<BearerTokenInformation>();
+            string accessToken;
+            var bearerTokenInfo = bearerTokens.FirstOrDefault();
+            if (bearerTokenInfo != null && !string.IsNullOrEmpty(bearerTokenInfo.AccessToken) 
+                        && bearerTokenInfo.DateTimeCreated.AddSeconds(bearerTokenInfo.ExpiresIn - 120).CompareTo(DateTime.Now) < 0)
             {
-                //get new token
-                accessToken = GetNewBearerToken();
+                accessToken = bearerTokenInfo.AccessToken;
             }
-
+            else
+            {
+                var response = await GetNewBearerTokenResponse(apiSettings);
+                accessToken = response.Data.AccessToken;
+            }
             return accessToken;
         }
     }

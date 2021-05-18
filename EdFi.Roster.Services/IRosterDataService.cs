@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using EdFi.Roster.Services.Database;
+using EdFi.Roster.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace EdFi.Roster.Services

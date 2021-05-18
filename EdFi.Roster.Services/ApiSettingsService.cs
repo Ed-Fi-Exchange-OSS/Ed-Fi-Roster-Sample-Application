@@ -1,25 +1,32 @@
-﻿using EdFi.Roster.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using EdFi.Roster.Models;
 
 namespace EdFi.Roster.Services
 {
     public class ApiSettingsService
     {
-        private IDataService _dataService;
+        private readonly IRosterDataService _dataService;
 
-        public ApiSettingsService()
+        public ApiSettingsService(IRosterDataService dataService)
         {
-            _dataService = new JsonDataFileService();
+            _dataService = dataService;
         }
 
-        public void Save(ApiSettings apiSettings)
+        public async Task Save(ApiSettings apiSettings)
         {
-            _dataService.Save(apiSettings);
+           await _dataService.SaveAsync(new List<ApiSettings>
+           {
+               apiSettings
+           });
         }
 
-        public ApiSettings Read()
+        public async Task<ApiSettings> Read()
         {
-            var sdkModel = _dataService.Read<ApiSettings>();
-            return new ApiSettings { Key = sdkModel.Key, RootUrl = sdkModel.RootUrl, Secret = sdkModel.Secret };
+            var result = await _dataService.ReadAllAsync<ApiSettings>();
+            var apiSetting = result.ToList().FirstOrDefault();
+            return new ApiSettings { Key = apiSetting?.Key, RootUrl = apiSetting?.RootUrl, Secret = apiSetting?.Secret };
         }
     }
 }

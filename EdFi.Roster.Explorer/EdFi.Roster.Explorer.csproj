@@ -5,17 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Views\ApiLog\**" />
-    <Content Remove="Views\ApiLog\**" />
-    <EmbeddedResource Remove="Views\ApiLog\**" />
-    <None Remove="Views\ApiLog\**" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EdFi.Roster.Data\EdFi.Roster.Data.csproj" />
     <ProjectReference Include="..\EdFi.Roster.Services\EdFi.Roster.Services.csproj" />
   </ItemGroup>
 

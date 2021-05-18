@@ -10,10 +10,13 @@ namespace EdFi.Roster.Services
     public class StaffService
     {
         private readonly IRosterDataService _rosterDataService;
+        private readonly IConfigurationService _configurationService;
 
-        public StaffService(IRosterDataService rosterDataService)
+        public StaffService(IRosterDataService rosterDataService
+            , IConfigurationService configurationService)
         {
             _rosterDataService = rosterDataService;
+            _configurationService = configurationService;
         }
 
         public async Task<IEnumerable<Staff>> ReadAllAsync()
@@ -31,7 +34,8 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<Staff>>> GetAllStaffWithExtendedInfoAsync()
         {
-            var api = new ApiSdk.ApiFacade().StaffsApi;
+            var apiConfiguration = await _configurationService.ApiConfiguration();
+            var api = new ApiSdk.ApiFacade(apiConfiguration).StaffsApi;
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Staff>>();

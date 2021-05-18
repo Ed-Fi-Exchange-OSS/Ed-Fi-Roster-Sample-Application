@@ -3,6 +3,7 @@ using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
@@ -10,10 +11,13 @@ namespace EdFi.Roster.Services
     public class LocalEducationAgencyService
     {
         private readonly IRosterDataService _rosterDataService;
+        private readonly IConfigurationService _configurationService;
 
-        public LocalEducationAgencyService(IRosterDataService rosterDataService)
+        public LocalEducationAgencyService(IRosterDataService rosterDataService
+                , IConfigurationService configurationService)
         {
             _rosterDataService = rosterDataService;
+            _configurationService = configurationService;
         }
 
         public async Task Save(List<LocalEducationAgency> localEducationAgencies)
@@ -32,7 +36,8 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<LocalEducationAgency>>> GetAllLocalEducationAgenciesWithExtendedInfoAsync()
         {
-            var leaApi = new ApiSdk.ApiFacade().LocalEducationAgenciesApi;
+            var apiConfiguration = await _configurationService.ApiConfiguration();
+            var leaApi = new ApiFacade(apiConfiguration).LocalEducationAgenciesApi;
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<LocalEducationAgency>>();

@@ -10,10 +10,13 @@ namespace EdFi.Roster.Services
     public class SectionService
     {
         private readonly IRosterDataService _rosterDataService;
+        private readonly IConfigurationService _configurationService;
 
-        public SectionService(IRosterDataService rosterDataService)
+        public SectionService(IRosterDataService rosterDataService
+                            , IConfigurationService configurationService)
         {
             _rosterDataService = rosterDataService;
+            _configurationService = configurationService;
         }
 
         public async Task Save(List<Section> sections)
@@ -31,7 +34,8 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<Section>>> GetAllSectionsWithExtendedInfoAsync()
         {
-            var sectionsApi = new ApiSdk.ApiFacade().SectionsApi;
+            var apiConfiguration = await _configurationService.ApiConfiguration();
+            var sectionsApi = new ApiSdk.ApiFacade(apiConfiguration).SectionsApi;
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Section>>();

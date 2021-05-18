@@ -10,10 +10,13 @@ namespace EdFi.Roster.Services
     public class StudentService
     {
         private readonly IRosterDataService _dataService;
+        private readonly IConfigurationService _configurationService;
 
-        public StudentService(IRosterDataService dataService)
+        public StudentService(IRosterDataService dataService
+            , IConfigurationService configurationService)
         {
             _dataService = dataService;
+            _configurationService = configurationService;
         }
 
         public async Task<IEnumerable<Student>> ReadAllAsync()
@@ -31,7 +34,8 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<Student>>> GetAllStudentsWithExtendedInfoAsync()
         {
-            var api = new ApiSdk.ApiFacade().StudentsApi;
+            var apiConfiguration = await _configurationService.ApiConfiguration();
+            var api = new ApiSdk.ApiFacade(apiConfiguration).StudentsApi;
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Student>>();
