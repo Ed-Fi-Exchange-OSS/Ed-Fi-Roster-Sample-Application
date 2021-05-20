@@ -1,8 +1,14 @@
-﻿using EdFi.Roster.Models;
+﻿using System;
+using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
 
@@ -12,12 +18,15 @@ namespace EdFi.Roster.Services
     {
         private readonly IRosterDataService _rosterDataService;
         private readonly IConfigurationService _configurationService;
+        private readonly ApiLogService _apiLogService;
 
         public LocalEducationAgencyService(IRosterDataService rosterDataService
-                , IConfigurationService configurationService)
+                , IConfigurationService configurationService
+                , ApiLogService apiLogService)
         {
             _rosterDataService = rosterDataService;
             _configurationService = configurationService;
+            _apiLogService = apiLogService;
         }
 
         public async Task Save(List<LocalEducationAgency> localEducationAgencies)
@@ -41,20 +50,50 @@ namespace EdFi.Roster.Services
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<LocalEducationAgency>>();
-            int currResponseRecordCount;
+            int currResponseRecordCount = 0;
 
             do
             {
-                var currResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
-                currResponseRecordCount = currResponse.Data.Count;
+                var errorMessage = string.Empty;
+                ApiResponse<List<LocalEducationAgency>> currentApiResponse = null;
+                try
+                {
+                    leaApi.Configuration = new Configuration
+                    {
+                        BasePath = apiConfiguration.BasePath,
+                        AccessToken = apiConfiguration.AccessToken
+                    };
+                    currentApiResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
+                }
+                catch (Exception exception)
+                {
+                    errorMessage = exception.Message;
+                }
+
+                if (currentApiResponse == null) continue;
+                currResponseRecordCount = currentApiResponse.Data.Count;
                 offset += limit;
                 var responsePage = new ExtendedInfoResponsePage
                 {
-                    RecordsCount = currResponse.Data.Count,
-                    ResponseUri = currResponse.ResponseUri
+                    RecordsCount = currentApiResponse.Data.Count,
+                    ResponseUri = currentApiResponse.ResponseUri
                 };
                 response.GeneralInfo.Pages.Add(responsePage);
-                response.FullDataSet.AddRange(currResponse.Data);
+                response.FullDataSet.AddRange(currentApiResponse.Data);
+
+                // log entry
+                var apiLogEntry = new ApiLogEntry
+                {
+                    LogDateTime = DateTime.Now,
+                    Method = "GET",
+                    StatusCode = currentApiResponse.StatusCode.ToString(),
+                    Content = string.IsNullOrEmpty(errorMessage)
+                        ? JsonConvert.SerializeObject(currentApiResponse.Data, Formatting.Indented)
+                        : errorMessage,
+                    Uri = currentApiResponse.ResponseUri.ToString()
+                };
+                await _apiLogService.WriteLog(apiLogEntry);
+
             } while (currResponseRecordCount >= limit);
 
             response.GeneralInfo.TotalRecords = response.FullDataSet.Count;

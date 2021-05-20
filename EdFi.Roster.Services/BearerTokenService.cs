@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Client;
+using Newtonsoft.Json;
 using RestSharp;
 
 namespace EdFi.Roster.Services
@@ -12,11 +13,16 @@ namespace EdFi.Roster.Services
     public class BearerTokenService
     {
         private readonly IRosterDataService _dataService;
+        private readonly ApiLogService _apiLogService;
 
-        public BearerTokenService(IRosterDataService dataService)
+        public BearerTokenService(IRosterDataService dataService
+        , ApiLogService apiLogService)
         {
             _dataService = dataService;
+            _apiLogService = apiLogService;
         }
+
+        private string AccessToken { get; set; }
 
         public async Task<ApiResponse<BearerTokenResponse>> GetNewBearerTokenResponse(ApiSettings apiSettings)
         {
@@ -33,8 +39,17 @@ namespace EdFi.Roster.Services
                 throw new ApiException((int)bearerTokenResponse.StatusCode, bearerTokenResponse.Data.Error);
             }
 
-            //log api call
-            // new ApiLogService().WriteLog(oauthClient, bearerTokenRequest, bearerTokenResponse);
+            var apiLogEntry = new ApiLogEntry
+            {
+                LogDateTime = DateTime.Now,
+                Method = bearerTokenRequest.Method.ToString(),
+                StatusCode = bearerTokenResponse.StatusCode.ToString(),
+                Content = string.IsNullOrEmpty(bearerTokenResponse.Data.Error)
+                    ? "Access token retrieved successfully"
+                    : bearerTokenResponse.Data.Error,
+                Uri = bearerTokenResponse.ResponseUri.ToString()
+            };
+            await _apiLogService.WriteLog(apiLogEntry);
 
             //save token info
             await _dataService.SaveAsync(new List<BearerTokenInformation>
@@ -61,22 +76,12 @@ namespace EdFi.Roster.Services
                 bearerTokenResponse.ResponseUri);
         }
         
-        public async Task<string> GetBearerToken(ApiSettings apiSettings)
+        public async Task<string> GetBearerToken(ApiSettings apiSettings, bool refreshToken = false)
         {
-            var bearerTokens = await _dataService.ReadAllAsync<BearerTokenInformation>();
-            string accessToken;
-            var bearerTokenInfo = bearerTokens.FirstOrDefault();
-            if (bearerTokenInfo != null && !string.IsNullOrEmpty(bearerTokenInfo.AccessToken) 
-                        && bearerTokenInfo.DateTimeCreated.AddSeconds(bearerTokenInfo.ExpiresIn - 120).CompareTo(DateTime.Now) < 0)
-            {
-                accessToken = bearerTokenInfo.AccessToken;
-            }
-            else
-            {
-                var response = await GetNewBearerTokenResponse(apiSettings);
-                accessToken = response.Data.AccessToken;
-            }
-            return accessToken;
+            if (AccessToken != null && !refreshToken) return AccessToken;
+            var response = await GetNewBearerTokenResponse(apiSettings);
+            AccessToken = response.Data.AccessToken;
+            return AccessToken;
         }
     }
 }

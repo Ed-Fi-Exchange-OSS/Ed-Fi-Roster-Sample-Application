@@ -1,4 +1,4 @@
-﻿@model IEnumerable<EdFi.Roster.Sdk.Models.ApiLogEntry>
+﻿@model IEnumerable<ApiLogEntry>
 
 @{
     ViewData["Title"] = "API Call Logs";
@@ -23,14 +23,14 @@
         <div class="row">
             <div class="col-1"><button id="toggleBtn@(cnt)" data-id="@cnt" class="btn btn-sm btn-link">Show Raw Data</button></div>
             <div class="col-2">@Html.DisplayFor(modelItem => item.LogDateTime)</div>
-            <div class="col-1">@Html.DisplayFor(modelItem => item.Response.StatusCode)</div>
-            <div class="col-1">@Html.DisplayFor(modelItem => item.Request.Method)</div>
-            <div class="col-7">@Html.DisplayFor(modelItem => item.Response.Uri.OriginalString)</div>
+            <div class="col-1">@Html.DisplayFor(modelItem => item.StatusCode)</div>
+            <div class="col-1">@Html.DisplayFor(modelItem => item.Method)</div>
+            <div class="col-7">@Html.DisplayFor(modelItem => item.Uri)</div>
         </div>
         <div id="detailsDiv@(cnt)" class="row" style="display:none">
             <div class="col-1"></div>
             <div class="col-2">Response Content:</div>
-            <div class="col-9">@Html.DisplayFor(modelItem => item.Response.Content)</div>
+            <div class="col-9">@Html.DisplayFor(modelItem => item.Content)</div>
         </div>
         {
             cnt++;

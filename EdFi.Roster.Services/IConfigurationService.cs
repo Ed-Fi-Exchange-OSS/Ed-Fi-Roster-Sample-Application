@@ -6,7 +6,7 @@ namespace EdFi.Roster.Services
 {
     public interface IConfigurationService
     {
-        Task<Configuration> ApiConfiguration();
+        Task<Configuration> ApiConfiguration(bool refreshToken = false);
     }
 
     public class ConfigurationService : IConfigurationService
@@ -21,10 +21,10 @@ namespace EdFi.Roster.Services
             _bearerTokenService = bearerTokenService;
         }
 
-        public async Task<Configuration> ApiConfiguration()
+        public async Task<Configuration> ApiConfiguration(bool refreshToken = false)
         {
             var apiSettings = await _apiSettingsService.Read();
-            var token =  await _bearerTokenService.GetBearerToken(apiSettings);
+            var token =  await _bearerTokenService.GetBearerToken(apiSettings, refreshToken);
             return new Configuration
             {
                 AccessToken = token,
