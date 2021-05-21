@@ -54,7 +54,7 @@ namespace EdFi.Roster.Services
                 ApiResponse<List<School>> currentApiResponse = null;
                 try
                 {
-                    currentApiResponse = await api.GetSchoolsAsyncWithHttpInfo(offset, limit); 
+                    currentApiResponse = await api.GetSchoolsWithHttpInfoAsync(offset, limit); 
                 }
                 catch (ApiException exception)
                 {
@@ -63,7 +63,7 @@ namespace EdFi.Roster.Services
                     {
                         apiConfiguration = await _configurationService.ApiConfiguration(true);
                         api = new ApiFacade(apiConfiguration).SchoolsApi;
-                        currentApiResponse = await api.GetSchoolsAsyncWithHttpInfo(offset, limit);
+                        currentApiResponse = await api.GetSchoolsWithHttpInfoAsync(offset, limit);
                         errorMessage = string.Empty;
                     }
                 }

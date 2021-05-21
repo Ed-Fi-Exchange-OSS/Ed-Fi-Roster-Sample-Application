@@ -47,17 +47,6 @@ namespace EdFi.Roster.Services
             };
             await _apiLogService.WriteLog(apiLogEntry);
 
-            //save token info
-            await _dataService.SaveAsync(new List<BearerTokenInformation>
-            {
-                new BearerTokenInformation
-                {
-                    DateTimeCreated = DateTime.Now,
-                    ExpiresIn = bearerTokenResponse.Data.ExpiresIn,
-                    AccessToken = bearerTokenResponse.Data.AccessToken
-                }
-            });
-
             var headersMap = new Multimap<string, string>();
 
             foreach (var header in bearerTokenResponse.Headers)

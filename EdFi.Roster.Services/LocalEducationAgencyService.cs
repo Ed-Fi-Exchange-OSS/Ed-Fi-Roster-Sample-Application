@@ -54,7 +54,7 @@ namespace EdFi.Roster.Services
                 ApiResponse<List<LocalEducationAgency>> currentApiResponse = null;
                 try
                 {
-                    currentApiResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
+                    currentApiResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
                 }
                 catch (ApiException exception)
                 {
@@ -63,7 +63,7 @@ namespace EdFi.Roster.Services
                     {
                          apiConfiguration = await _configurationService.ApiConfiguration(true);
                          leaApi = new ApiFacade(apiConfiguration).LocalEducationAgenciesApi;
-                         currentApiResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
+                         currentApiResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
                          errorMessage = string.Empty;
                     }
                 }
