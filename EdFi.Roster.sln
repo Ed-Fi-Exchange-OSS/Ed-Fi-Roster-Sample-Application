@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Services", "EdF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Models", "EdFi.Roster.Models\EdFi.Roster.Models.csproj", "{00506D24-8278-409A-A0CA-75A7715F341E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Sdk.Core", "EdFi.Roster.Sdk.Core\EdFi.Roster.Sdk.Core.csproj", "{10FAC0AC-CF4D-4BB1-9F6F-E2754FA30EC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdFi.Roster.Sdk", "EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj", "{10FAC0AC-CF4D-4BB1-9F6F-E2754FA30EC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

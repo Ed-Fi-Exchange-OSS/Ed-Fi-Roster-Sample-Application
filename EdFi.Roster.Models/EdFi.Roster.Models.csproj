@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdFi.Roster.Sdk.Core\EdFi.Roster.Sdk.Core.csproj" />
+    <ProjectReference Include="..\EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj" />
   </ItemGroup>
 
 </Project>
