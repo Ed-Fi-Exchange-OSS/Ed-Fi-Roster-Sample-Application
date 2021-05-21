@@ -40,7 +40,7 @@ namespace EdFi.Roster.Services
 
             do
             {
-                var currResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
+                var currResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
                 currResponseRecordCount = currResponse.Data.Count;
                 offset += limit;
                 var responsePage = new ExtendedInfoResponsePage

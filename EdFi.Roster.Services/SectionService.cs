@@ -39,7 +39,7 @@ namespace EdFi.Roster.Services
 
             do
             {
-                var currResponse = await sectionsApi.GetSectionsAsyncWithHttpInfo(offset, limit);
+                var currResponse = await sectionsApi.GetSectionsWithHttpInfoAsync(offset, limit);
                 currResponseRecordCount = currResponse.Data.Count;
                 offset += limit;
                 var responsePage = new ExtendedInfoResponsePage
