@@ -8,30 +8,26 @@
  */
 
 
-using System;
-
 namespace EdFi.Roster.Sdk.Client
 {
     /// <summary>
-    /// Represents configuration aspects required to interact with the API endpoints.
+    /// Http methods supported by swagger
     /// </summary>
-    public interface IApiAccessor
+    public enum HttpMethod
     {
-        /// <summary>
-        /// Gets or sets the configuration object
-        /// </summary>
-        /// <value>An instance of the Configuration</value>
-        IReadableConfiguration Configuration { get; set; }
-
-        /// <summary>
-        /// Gets the base path of the API client.
-        /// </summary>
-        /// <value>The base path</value>
-        String GetBasePath();
-
-        /// <summary>
-        /// Provides a factory method hook for the creation of exceptions.
-        /// </summary>
-        ExceptionFactory ExceptionFactory { get; set; }
+        /// <summary>HTTP GET request.</summary>
+        Get,
+        /// <summary>HTTP POST request.</summary>
+        Post,
+        /// <summary>HTTP PUT request.</summary>
+        Put,
+        /// <summary>HTTP DELETE request.</summary>
+        Delete,
+        /// <summary>HTTP HEAD request.</summary>
+        Head,
+        /// <summary>HTTP OPTIONS request.</summary>
+        Options,
+        /// <summary>HTTP PATCH request.</summary>
+        Patch
     }
 }

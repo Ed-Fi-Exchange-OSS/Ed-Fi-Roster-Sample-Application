@@ -13,37 +13,39 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace EdFi.Roster.Sdk.Models.EnrollmentComposites
 {
     /// <summary>
-    /// SectionSectionClassPeriod
+    /// DeletedResource
     /// </summary>
-    [DataContract(Name = "section_sectionClassPeriod")]
-    public partial class SectionSectionClassPeriod : IEquatable<SectionSectionClassPeriod>, IValidatableObject
+    [DataContract(Name = "deletedResource")]
+    public partial class DeletedResource : IEquatable<DeletedResource>, IValidatableObject
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SectionSectionClassPeriod" /> class.
+        /// Initializes a new instance of the <see cref="DeletedResource" /> class.
         /// </summary>
-        [JsonConstructor]
-        protected SectionSectionClassPeriod() { }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SectionSectionClassPeriod" /> class.
-        /// </summary>
-        /// <param name="classPeriodName">An indication of the portion of a typical daily session in which students receive instruction in a specified subject (e.g., morning, sixth period, block period, or AB schedules). (required).</param>
-        public SectionSectionClassPeriod(string classPeriodName = default(string))
+        /// <param name="id">Resource identifier.</param>
+        /// <param name="changeVersion">Change version.</param>
+        public DeletedResource(string id = default(string), decimal changeVersion = default(decimal))
         {
-            // to ensure "classPeriodName" is required (not null)
-            this.ClassPeriodName = classPeriodName ?? throw new ArgumentNullException("classPeriodName is a required property for SectionSectionClassPeriod and cannot be null");
+            this.Id = id;
+            this.ChangeVersion = changeVersion;
         }
 
         /// <summary>
-        /// An indication of the portion of a typical daily session in which students receive instruction in a specified subject (e.g., morning, sixth period, block period, or AB schedules).
+        /// Resource identifier
         /// </summary>
-        /// <value>An indication of the portion of a typical daily session in which students receive instruction in a specified subject (e.g., morning, sixth period, block period, or AB schedules).</value>
-        [DataMember(Name = "classPeriodName", IsRequired = true, EmitDefaultValue = false)]
-        public string ClassPeriodName { get; set; }
+        /// <value>Resource identifier</value>
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Change version
+        /// </summary>
+        /// <value>Change version</value>
+        [DataMember(Name = "changeVersion", EmitDefaultValue = false)]
+        public decimal ChangeVersion { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -52,8 +54,9 @@ namespace EdFi.Roster.Sdk.Models.EnrollmentComposites
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class SectionSectionClassPeriod {\n");
-            sb.Append("  ClassPeriodName: ").Append(ClassPeriodName).Append("\n");
+            sb.Append("class DeletedResource {\n");
+            sb.Append("  Id: ").Append(Id).Append("\n");
+            sb.Append("  ChangeVersion: ").Append(ChangeVersion).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -74,24 +77,28 @@ namespace EdFi.Roster.Sdk.Models.EnrollmentComposites
         /// <returns>Boolean</returns>
         public override bool Equals(object input)
         {
-            return this.Equals(input as SectionSectionClassPeriod);
+            return this.Equals(input as DeletedResource);
         }
 
         /// <summary>
-        /// Returns true if SectionSectionClassPeriod instances are equal
+        /// Returns true if DeletedResource instances are equal
         /// </summary>
-        /// <param name="input">Instance of SectionSectionClassPeriod to be compared</param>
+        /// <param name="input">Instance of DeletedResource to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(SectionSectionClassPeriod input)
+        public bool Equals(DeletedResource input)
         {
             if (input == null)
                 return false;
 
             return 
                 (
-                    this.ClassPeriodName == input.ClassPeriodName ||
-                    (this.ClassPeriodName != null &&
-                    this.ClassPeriodName.Equals(input.ClassPeriodName))
+                    this.Id == input.Id ||
+                    (this.Id != null &&
+                    this.Id.Equals(input.Id))
+                ) && 
+                (
+                    this.ChangeVersion == input.ChangeVersion ||
+                    this.ChangeVersion.Equals(input.ChangeVersion)
                 );
         }
 
@@ -104,8 +111,9 @@ namespace EdFi.Roster.Sdk.Models.EnrollmentComposites
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = 41;
-                if (this.ClassPeriodName != null)
-                    hashCode = hashCode * 59 + this.ClassPeriodName.GetHashCode();
+                if (this.Id != null)
+                    hashCode = hashCode * 59 + this.Id.GetHashCode();
+                hashCode = hashCode * 59 + this.ChangeVersion.GetHashCode();
                 return hashCode;
             }
         }
@@ -117,12 +125,6 @@ namespace EdFi.Roster.Sdk.Models.EnrollmentComposites
         /// <returns>Validation Result</returns>
         IEnumerable<System.ComponentModel.DataAnnotations.ValidationResult> IValidatableObject.Validate(ValidationContext validationContext)
         {
-            // ClassPeriodName (string) maxLength
-            if(this.ClassPeriodName != null && this.ClassPeriodName.Length > 60)
-            {
-                yield return new System.ComponentModel.DataAnnotations.ValidationResult("Invalid value for ClassPeriodName, length must be less than 60.", new [] { "ClassPeriodName" });
-            }
-
             yield break;
         }
     }

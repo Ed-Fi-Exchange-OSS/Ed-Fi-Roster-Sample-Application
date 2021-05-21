@@ -3,7 +3,6 @@ using System.Linq;
 using System.Net;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Client;
-using EdFi.Roster.Sdk.Services;
 using RestSharp;
 
 namespace EdFi.Roster.Services
@@ -49,7 +48,7 @@ namespace EdFi.Roster.Services
             }
 
             //log api call
-            new ApiLogService().WriteLog(oauthClient, bearerTokenRequest, bearerTokenResponse);
+            // new ApiLogService().WriteLog(oauthClient, bearerTokenRequest, bearerTokenResponse);
 
             //save token info
             dataService.Save(new BearerTokenInformation
@@ -59,9 +58,16 @@ namespace EdFi.Roster.Services
                 AccessToken = bearerTokenResponse.Data.AccessToken
             });
 
+            var headersMap = new Multimap<string, string>();
+
+            foreach (var header in bearerTokenResponse.Headers)
+            {
+                headersMap.Add(header.Name, header.Value.ToString());
+            }
+
             //return results
-            return new ApiResponse<BearerTokenResponse>((int)bearerTokenResponse.StatusCode,
-                bearerTokenResponse.Headers.ToDictionary(x => x.Name, x => x.Value.ToString()),
+            return new ApiResponse<BearerTokenResponse>(bearerTokenResponse.StatusCode,
+                headersMap,
                 (BearerTokenResponse)bearerTokenResponse.Data,
                 bearerTokenResponse.ResponseUri);
         }
