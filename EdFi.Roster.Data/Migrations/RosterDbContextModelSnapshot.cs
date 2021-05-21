@@ -65,26 +65,6 @@ namespace EdFi.Roster.Data.Migrations
                     b.ToTable("ApiSettings");
                 });
 
-            modelBuilder.Entity("EdFi.Roster.Models.BearerTokenInformation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("AccessToken")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateTimeCreated")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ExpiresIn")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BearerTokens");
-                });
-
             modelBuilder.Entity("EdFi.Roster.Models.RosterLocalEducationAgency", b =>
                 {
                     b.Property<int>("Id")

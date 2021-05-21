@@ -1,24 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Client;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace EdFi.Roster.Services
 {
     public class BearerTokenService
     {
-        private readonly IRosterDataService _dataService;
+      
         private readonly ApiLogService _apiLogService;
 
-        public BearerTokenService(IRosterDataService dataService
-        , ApiLogService apiLogService)
+        public BearerTokenService(ApiLogService apiLogService)
         {
-            _dataService = dataService;
             _apiLogService = apiLogService;
         }
 

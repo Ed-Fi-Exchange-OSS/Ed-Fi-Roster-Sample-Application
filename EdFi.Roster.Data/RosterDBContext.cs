@@ -16,7 +16,6 @@ namespace EdFi.Roster.Data
         public DbSet<RosterSection> Sections { get; set; }
         public DbSet<RosterStaff> Staff { get; set; }
         public DbSet<RosterStudent> Students { get; set; }
-        public DbSet<BearerTokenInformation> BearerTokens { get; set; }
         public DbSet<ApiSettings> ApiSettings { get; set; }
         public DbSet<ApiLogEntry> ApiLogEntries { get; set; }
     }
