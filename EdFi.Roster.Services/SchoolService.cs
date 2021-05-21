@@ -2,7 +2,9 @@
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
 
@@ -12,12 +14,15 @@ namespace EdFi.Roster.Services
     {
         private readonly IRosterDataService _rosterDataService;
         private readonly IConfigurationService _configurationService;
+        private readonly IResponseHandleService _responseHandleService;
 
         public SchoolService(IRosterDataService rosterDataService
-                            , IConfigurationService configurationService)
+                            , IConfigurationService configurationService
+                            , IResponseHandleService responseHandleService)
         {
             _rosterDataService = rosterDataService;
             _configurationService = configurationService;
+            _responseHandleService = responseHandleService;
         }
 
         public async Task Save(List<School> schools)
@@ -41,20 +46,33 @@ namespace EdFi.Roster.Services
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<School>>();
-            int currResponseRecordCount;
+            int currResponseRecordCount = 0;
 
             do
             {
-                var currResponse = await api.GetSchoolsWithHttpInfoAsync(offset, limit);
-                currResponseRecordCount = currResponse.Data.Count;
-                offset += limit;
-                var responsePage = new ExtendedInfoResponsePage
+                var errorMessage = string.Empty;
+                ApiResponse<List<School>> currentApiResponse = null;
+                try
                 {
-                    RecordsCount = currResponse.Data.Count,
-                    ResponseUri = currResponse.ResponseUri
-                };
-                response.GeneralInfo.Pages.Add(responsePage);
-                response.FullDataSet.AddRange(currResponse.Data);
+                    currentApiResponse = await api.GetSchoolsAsyncWithHttpInfo(offset, limit); 
+                }
+                catch (ApiException exception)
+                {
+                    errorMessage = exception.Message;
+                    if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
+                    {
+                        apiConfiguration = await _configurationService.ApiConfiguration(true);
+                        api = new ApiFacade(apiConfiguration).SchoolsApi;
+                        currentApiResponse = await api.GetSchoolsAsyncWithHttpInfo(offset, limit);
+                        errorMessage = string.Empty;
+                    }
+                }
+
+                if (currentApiResponse == null) continue;
+                currResponseRecordCount = currentApiResponse.Data.Count;
+                offset += limit;
+                response = await _responseHandleService.Handle(currentApiResponse, response, errorMessage);
+
             } while (currResponseRecordCount >= limit);
 
             response.GeneralInfo.TotalRecords = response.FullDataSet.Count;

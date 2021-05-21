@@ -1,12 +1,8 @@
-﻿using System;
-using EdFi.Roster.Models;
+﻿using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
@@ -18,15 +14,15 @@ namespace EdFi.Roster.Services
     {
         private readonly IRosterDataService _rosterDataService;
         private readonly IConfigurationService _configurationService;
-        private readonly ApiLogService _apiLogService;
+        private readonly IResponseHandleService _responseHandleService;
 
         public LocalEducationAgencyService(IRosterDataService rosterDataService
                 , IConfigurationService configurationService
-                , ApiLogService apiLogService)
+                , IResponseHandleService responseHandleService)
         {
             _rosterDataService = rosterDataService;
             _configurationService = configurationService;
-            _apiLogService = apiLogService;
+            _responseHandleService = responseHandleService;
         }
 
         public async Task Save(List<LocalEducationAgency> localEducationAgencies)
@@ -58,41 +54,24 @@ namespace EdFi.Roster.Services
                 ApiResponse<List<LocalEducationAgency>> currentApiResponse = null;
                 try
                 {
-                    leaApi.Configuration = new Configuration
-                    {
-                        BasePath = apiConfiguration.BasePath,
-                        AccessToken = apiConfiguration.AccessToken
-                    };
                     currentApiResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
                 }
-                catch (Exception exception)
+                catch (ApiException exception)
                 {
                     errorMessage = exception.Message;
+                    if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
+                    {
+                         apiConfiguration = await _configurationService.ApiConfiguration(true);
+                         leaApi = new ApiFacade(apiConfiguration).LocalEducationAgenciesApi;
+                         currentApiResponse = await leaApi.GetLocalEducationAgenciesAsyncWithHttpInfo(offset, limit);
+                         errorMessage = string.Empty;
+                    }
                 }
 
                 if (currentApiResponse == null) continue;
                 currResponseRecordCount = currentApiResponse.Data.Count;
                 offset += limit;
-                var responsePage = new ExtendedInfoResponsePage
-                {
-                    RecordsCount = currentApiResponse.Data.Count,
-                    ResponseUri = currentApiResponse.ResponseUri
-                };
-                response.GeneralInfo.Pages.Add(responsePage);
-                response.FullDataSet.AddRange(currentApiResponse.Data);
-
-                // log entry
-                var apiLogEntry = new ApiLogEntry
-                {
-                    LogDateTime = DateTime.Now,
-                    Method = "GET",
-                    StatusCode = currentApiResponse.StatusCode.ToString(),
-                    Content = string.IsNullOrEmpty(errorMessage)
-                        ? JsonConvert.SerializeObject(currentApiResponse.Data, Formatting.Indented)
-                        : errorMessage,
-                    Uri = currentApiResponse.ResponseUri.ToString()
-                };
-                await _apiLogService.WriteLog(apiLogEntry);
+                response = await _responseHandleService.Handle(currentApiResponse, response, errorMessage);
 
             } while (currResponseRecordCount >= limit);
 

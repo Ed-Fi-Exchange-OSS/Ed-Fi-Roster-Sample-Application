@@ -1,8 +1,12 @@
-﻿using EdFi.Roster.Models;
+﻿using System;
+using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Client;
+using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
@@ -11,12 +15,15 @@ namespace EdFi.Roster.Services
     {
         private readonly IRosterDataService _dataService;
         private readonly IConfigurationService _configurationService;
+        private readonly IResponseHandleService _responseHandleService;
 
         public StudentService(IRosterDataService dataService
-            , IConfigurationService configurationService)
+            , IConfigurationService configurationService
+            , IResponseHandleService responseHandleService)
         {
             _dataService = dataService;
             _configurationService = configurationService;
+            _responseHandleService = responseHandleService;
         }
 
         public async Task<IEnumerable<Student>> ReadAllAsync()
@@ -35,24 +42,37 @@ namespace EdFi.Roster.Services
         public async Task<ExtendedInfoResponse<List<Student>>> GetAllStudentsWithExtendedInfoAsync()
         {
             var apiConfiguration = await _configurationService.ApiConfiguration();
-            var api = new ApiSdk.ApiFacade(apiConfiguration).StudentsApi;
+            var api = new ApiFacade(apiConfiguration).StudentsApi;
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Student>>();
-            int currResponseRecordCount;
+            int currResponseRecordCount = 0;
 
             do
             {
-                var currResponse = await api.GetStudentsWithHttpInfoAsync(offset, limit);
-                currResponseRecordCount = currResponse.Data.Count;
-                offset += limit;
-                var responsePage = new ExtendedInfoResponsePage
+                var errorMessage = string.Empty;
+                ApiResponse<List<Student>> currentApiResponse = null;
+                try
                 {
-                    RecordsCount = currResponse.Data.Count,
-                    ResponseUri = currResponse.ResponseUri
-                };
-                response.GeneralInfo.Pages.Add(responsePage);
-                response.FullDataSet.AddRange(currResponse.Data);
+                    currentApiResponse = await api.GetStudentsAsyncWithHttpInfo(offset, limit);
+                }
+                catch (ApiException exception)
+                {
+                    errorMessage = exception.Message;
+                    if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
+                    {
+                        apiConfiguration = await _configurationService.ApiConfiguration(true);
+                        api = new ApiFacade(apiConfiguration).StudentsApi;
+                        currentApiResponse = await api.GetStudentsAsyncWithHttpInfo(offset, limit);
+                        errorMessage = string.Empty;
+                    }
+                }
+
+                if (currentApiResponse == null) continue;
+                currResponseRecordCount = currentApiResponse.Data.Count;
+                offset += limit;
+                response = await _responseHandleService.Handle(currentApiResponse, response, errorMessage);
+               
             } while (currResponseRecordCount >= limit);
 
             response.GeneralInfo.TotalRecords = response.FullDataSet.Count;
