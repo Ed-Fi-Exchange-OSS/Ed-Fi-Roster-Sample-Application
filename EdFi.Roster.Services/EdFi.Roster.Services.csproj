@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EdFi.Roster.Models\EdFi.Roster.Models.csproj" />
-    <ProjectReference Include="..\EdFi.Roster.Sdk\EdFi.Roster.Sdk.csproj" />
+    <ProjectReference Include="..\EdFi.Roster.Sdk.Core\EdFi.Roster.Sdk.Core.csproj" />
   </ItemGroup>
 
 </Project>
