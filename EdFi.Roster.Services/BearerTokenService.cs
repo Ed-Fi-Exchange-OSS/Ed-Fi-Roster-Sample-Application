@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using EdFi.Roster.Models;
@@ -32,20 +31,11 @@ namespace EdFi.Roster.Services
 
             if (!string.IsNullOrEmpty(bearerTokenResponse.Data.Error) || bearerTokenResponse.StatusCode != HttpStatusCode.OK)
             {
+                await LogDetails(bearerTokenRequest, bearerTokenResponse);
                 throw new ApiException((int)bearerTokenResponse.StatusCode, bearerTokenResponse.Data.Error);
             }
 
-            var apiLogEntry = new ApiLogEntry
-            {
-                LogDateTime = DateTime.Now,
-                Method = bearerTokenRequest.Method.ToString(),
-                StatusCode = bearerTokenResponse.StatusCode.ToString(),
-                Content = string.IsNullOrEmpty(bearerTokenResponse.Data.Error)
-                    ? "Access token retrieved successfully"
-                    : bearerTokenResponse.Data.Error,
-                Uri = bearerTokenResponse.ResponseUri.ToString()
-            };
-            await _apiLogService.WriteLog(apiLogEntry);
+            await LogDetails(bearerTokenRequest, bearerTokenResponse);
 
             var headersMap = new Multimap<string, string>();
 
@@ -60,7 +50,22 @@ namespace EdFi.Roster.Services
                 (BearerTokenResponse)bearerTokenResponse.Data,
                 bearerTokenResponse.ResponseUri);
         }
-        
+
+        private async Task LogDetails(IRestRequest bearerTokenRequest, IRestResponse<BearerTokenResponse> bearerTokenResponse)
+        {
+            var apiLogEntry = new ApiLogEntry
+            {
+                LogDateTime = DateTime.Now,
+                Method = bearerTokenRequest.Method.ToString(),
+                StatusCode = bearerTokenResponse.StatusCode.ToString(),
+                Content = string.IsNullOrEmpty(bearerTokenResponse.Data.Error)
+                    ? "Access token retrieved successfully"
+                    : bearerTokenResponse.Data.Error,
+                Uri = bearerTokenResponse.ResponseUri.ToString()
+            };
+            await _apiLogService.WriteLog(apiLogEntry);
+        }
+
         public async Task<string> GetBearerToken(ApiSettings apiSettings, bool refreshToken = false)
         {
             if (AccessToken != null && !refreshToken) return AccessToken;
