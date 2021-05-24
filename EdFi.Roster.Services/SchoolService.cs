@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Api.EnrollmentComposites;
 using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
@@ -13,16 +14,16 @@ namespace EdFi.Roster.Services
     public class SchoolService
     {
         private readonly IRosterDataService _rosterDataService;
-        private readonly IConfigurationService _configurationService;
         private readonly IResponseHandleService _responseHandleService;
+        private readonly IApiFacade _apiFacade;
 
         public SchoolService(IRosterDataService rosterDataService
-                            , IConfigurationService configurationService
-                            , IResponseHandleService responseHandleService)
+            , IResponseHandleService responseHandleService
+            , IApiFacade apiFacade)
         {
             _rosterDataService = rosterDataService;
-            _configurationService = configurationService;
             _responseHandleService = responseHandleService;
+            _apiFacade = apiFacade;
         }
 
         public async Task Save(List<School> schools)
@@ -41,8 +42,7 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<School>>> GetAllSchoolsWithExtendedInfoAsync()
         {
-            var apiConfiguration = await _configurationService.ApiConfiguration();
-            var api = new ApiFacade(apiConfiguration).SchoolsApi;
+            var api = await _apiFacade.GetApiClassInstance<SchoolsApi>();
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<School>>();
@@ -61,8 +61,7 @@ namespace EdFi.Roster.Services
                     errorMessage = exception.Message;
                     if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
                     {
-                        apiConfiguration = await _configurationService.ApiConfiguration(true);
-                        api = new ApiFacade(apiConfiguration).SchoolsApi;
+                        api = await _apiFacade.GetApiClassInstance<SchoolsApi>(true);
                         currentApiResponse = await api.GetSchoolsWithHttpInfoAsync(offset, limit);
                         errorMessage = string.Empty;
                     }

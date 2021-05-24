@@ -1,10 +1,10 @@
-﻿using System;
-using EdFi.Roster.Models;
+﻿using EdFi.Roster.Models;
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Api.EnrollmentComposites;
 using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
@@ -14,16 +14,16 @@ namespace EdFi.Roster.Services
     public class StudentService
     {
         private readonly IRosterDataService _dataService;
-        private readonly IConfigurationService _configurationService;
         private readonly IResponseHandleService _responseHandleService;
+        private readonly IApiFacade _apiFacade;
 
         public StudentService(IRosterDataService dataService
-            , IConfigurationService configurationService
-            , IResponseHandleService responseHandleService)
+            , IResponseHandleService responseHandleService
+            , IApiFacade apiFacade)
         {
             _dataService = dataService;
-            _configurationService = configurationService;
             _responseHandleService = responseHandleService;
+            _apiFacade = apiFacade;
         }
 
         public async Task<IEnumerable<Student>> ReadAllAsync()
@@ -41,8 +41,7 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<Student>>> GetAllStudentsWithExtendedInfoAsync()
         {
-            var apiConfiguration = await _configurationService.ApiConfiguration();
-            var api = new ApiFacade(apiConfiguration).StudentsApi;
+            var api = await _apiFacade.GetApiClassInstance<StudentsApi>();
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Student>>();
@@ -61,8 +60,7 @@ namespace EdFi.Roster.Services
                     errorMessage = exception.Message;
                     if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
                     {
-                        apiConfiguration = await _configurationService.ApiConfiguration(true);
-                        api = new ApiFacade(apiConfiguration).StudentsApi;
+                        api = await _apiFacade.GetApiClassInstance<StudentsApi>(true);
                         currentApiResponse = await api.GetStudentsWithHttpInfoAsync(offset, limit);
                         errorMessage = string.Empty;
                     }

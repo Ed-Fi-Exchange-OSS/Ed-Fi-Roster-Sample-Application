@@ -1,29 +1,26 @@
-﻿using EdFi.Roster.Sdk.Client;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace EdFi.Roster.Services.ApiSdk
 {
-    public class ApiFacade
+    public interface IApiFacade
     {
-        private readonly Configuration _configuration;
+        Task<T> GetApiClassInstance<T>(bool refreshToken = false);
+    }
 
-        public ApiFacade(Configuration configuration)
+    public class ApiFacade : IApiFacade
+    {
+        private readonly IConfigurationService _configurationService;
+
+        public ApiFacade(IConfigurationService configurationService)
         {
-            _configuration = configuration;
+            _configurationService = configurationService;
         }
 
-        public Sdk.Api.EnrollmentComposites.ILocalEducationAgenciesApi LocalEducationAgenciesApi =>
-            new Sdk.Api.EnrollmentComposites.LocalEducationAgenciesApi(_configuration);
-
-        public Sdk.Api.EnrollmentComposites.ISchoolsApi SchoolsApi =>
-            new Sdk.Api.EnrollmentComposites.SchoolsApi(_configuration);
-
-        public Sdk.Api.EnrollmentComposites.IStaffsApi StaffsApi =>
-            new Sdk.Api.EnrollmentComposites.StaffsApi(_configuration);
-
-        public Sdk.Api.EnrollmentComposites.IStudentsApi StudentsApi =>
-            new Sdk.Api.EnrollmentComposites.StudentsApi(_configuration);
-
-        public Sdk.Api.EnrollmentComposites.ISectionsApi SectionsApi =>
-            new Sdk.Api.EnrollmentComposites.SectionsApi(_configuration);
+        public async Task<T> GetApiClassInstance<T>(bool refreshToken = false)
+        {
+            var apiConfiguration = await _configurationService.ApiConfiguration(refreshToken);
+            return (T)Activator.CreateInstance(typeof(T), apiConfiguration);
+        }
     }
 }

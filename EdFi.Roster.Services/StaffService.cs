@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Api.EnrollmentComposites;
 using EdFi.Roster.Sdk.Client;
 using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
@@ -13,16 +14,16 @@ namespace EdFi.Roster.Services
     public class StaffService
     {
         private readonly IRosterDataService _rosterDataService;
-        private readonly IConfigurationService _configurationService;
         private readonly IResponseHandleService _responseHandleService;
+        private readonly IApiFacade _apiFacade;
 
         public StaffService(IRosterDataService rosterDataService
-            , IConfigurationService configurationService
-            , IResponseHandleService responseHandleService)
+            , IResponseHandleService responseHandleService
+            , IApiFacade apiFacade)
         {
             _rosterDataService = rosterDataService;
-            _configurationService = configurationService;
             _responseHandleService = responseHandleService;
+            _apiFacade = apiFacade;
         }
 
         public async Task<IEnumerable<Staff>> ReadAllAsync()
@@ -40,8 +41,7 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<Staff>>> GetAllStaffWithExtendedInfoAsync()
         {
-            var apiConfiguration = await _configurationService.ApiConfiguration();
-            var api = new ApiFacade(apiConfiguration).StaffsApi;
+            var api = await _apiFacade.GetApiClassInstance<StaffsApi>();
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<Staff>>();
@@ -60,8 +60,7 @@ namespace EdFi.Roster.Services
                     errorMessage = exception.Message;
                     if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
                     {
-                        apiConfiguration = await _configurationService.ApiConfiguration(true);
-                        api = new ApiFacade(apiConfiguration).StaffsApi;
+                        api = await _apiFacade.GetApiClassInstance<StaffsApi>(true); 
                         currentApiResponse = await api.GetStaffsWithHttpInfoAsync(offset, limit);
                         errorMessage = string.Empty;
                     }
