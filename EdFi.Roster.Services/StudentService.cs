@@ -50,6 +50,7 @@ namespace EdFi.Roster.Services
             do
             {
                 var errorMessage = string.Empty;
+                var responseUri = _apiFacade.BuildResponseUri(ApiRoutes.Students, offset, limit);
                 ApiResponse<List<Student>> currentApiResponse = null;
                 try
                 {
@@ -69,8 +70,8 @@ namespace EdFi.Roster.Services
                 if (currentApiResponse == null) continue;
                 currResponseRecordCount = currentApiResponse.Data.Count;
                 offset += limit;
-                response = await _responseHandleService.Handle(currentApiResponse, response, errorMessage);
-               
+                response = await _responseHandleService.Handle(currentApiResponse, response, responseUri, errorMessage);
+
             } while (currResponseRecordCount >= limit);
 
             response.GeneralInfo.TotalRecords = response.FullDataSet.Count;
