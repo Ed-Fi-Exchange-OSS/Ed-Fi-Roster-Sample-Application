@@ -2,7 +2,11 @@
 using EdFi.Roster.Sdk.Models.EnrollmentComposites;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
+using EdFi.Roster.Sdk.Api.EnrollmentComposites;
+using EdFi.Roster.Sdk.Client;
+using EdFi.Roster.Services.ApiSdk;
 using Newtonsoft.Json;
 
 namespace EdFi.Roster.Services
@@ -10,10 +14,16 @@ namespace EdFi.Roster.Services
     public class LocalEducationAgencyService
     {
         private readonly IRosterDataService _rosterDataService;
+        private readonly IResponseHandleService _responseHandleService;
+        private readonly IApiFacade _apiFacade;
 
-        public LocalEducationAgencyService(IRosterDataService rosterDataService)
+        public LocalEducationAgencyService(IRosterDataService rosterDataService
+            , IResponseHandleService responseHandleService
+            , IApiFacade apiFacade)
         {
             _rosterDataService = rosterDataService;
+            _responseHandleService = responseHandleService;
+            _apiFacade = apiFacade;
         }
 
         public async Task Save(List<LocalEducationAgency> localEducationAgencies)
@@ -32,24 +42,36 @@ namespace EdFi.Roster.Services
 
         public async Task<ExtendedInfoResponse<List<LocalEducationAgency>>> GetAllLocalEducationAgenciesWithExtendedInfoAsync()
         {
-            var leaApi = new ApiSdk.ApiFacade().LocalEducationAgenciesApi;
+            var leaApi = await _apiFacade.GetApiClassInstance<LocalEducationAgenciesApi>();
             var limit = 100;
             var offset = 0;
             var response = new ExtendedInfoResponse<List<LocalEducationAgency>>();
-            int currResponseRecordCount;
+            int currResponseRecordCount = 0;
 
             do
             {
-                var currResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
-                currResponseRecordCount = currResponse.Data.Count;
-                offset += limit;
-                var responsePage = new ExtendedInfoResponsePage
+                var errorMessage = string.Empty;
+                ApiResponse<List<LocalEducationAgency>> currentApiResponse = null;
+                try
                 {
-                    RecordsCount = currResponse.Data.Count,
-                    ResponseUri = currResponse.ResponseUri
-                };
-                response.GeneralInfo.Pages.Add(responsePage);
-                response.FullDataSet.AddRange(currResponse.Data);
+                    currentApiResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
+                }
+                catch (ApiException exception)
+                {
+                    errorMessage = exception.Message;
+                    if (exception.ErrorCode.Equals((int)HttpStatusCode.Unauthorized))
+                    {
+                        leaApi = await _apiFacade.GetApiClassInstance<LocalEducationAgenciesApi>(true);
+                        currentApiResponse = await leaApi.GetLocalEducationAgenciesWithHttpInfoAsync(offset, limit);
+                        errorMessage = string.Empty;
+                    }
+                }
+
+                if (currentApiResponse == null) continue;
+                currResponseRecordCount = currentApiResponse.Data.Count;
+                offset += limit;
+                response = await _responseHandleService.Handle(currentApiResponse, response, errorMessage);
+
             } while (currResponseRecordCount >= limit);
 
             response.GeneralInfo.TotalRecords = response.FullDataSet.Count;

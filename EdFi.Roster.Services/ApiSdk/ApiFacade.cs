@@ -1,69 +1,26 @@
-﻿using EdFi.Roster.Sdk.Client;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace EdFi.Roster.Services.ApiSdk
 {
-    public class ApiFacade
+    public interface IApiFacade
     {
-        private readonly Configuration configuration;
+        Task<T> GetApiClassInstance<T>(bool refreshToken = false);
+    }
 
-        public ApiFacade()
+    public class ApiFacade : IApiFacade
+    {
+        private readonly IConfigurationService _configurationService;
+
+        public ApiFacade(IConfigurationService configurationService)
         {
-            var settingsService = new ApiSettingsService();
-            var apiSettings = settingsService.Read();
-            var url = ApiFacade.Combine(apiSettings.RootUrl, "composites/v1");
-            var tokenService = new BearerTokenService();
-            var accessToken = tokenService.GetBearerToken();
-            
-            configuration = new Configuration
-            {
-                AccessToken = accessToken,
-                BasePath = url
-            };
+            _configurationService = configurationService;
         }
 
-        public Sdk.Api.EnrollmentComposites.ILocalEducationAgenciesApi LocalEducationAgenciesApi => 
-            new Sdk.Api.EnrollmentComposites.LocalEducationAgenciesApi(configuration);
-
-        public Sdk.Api.EnrollmentComposites.ISchoolsApi SchoolsApi => 
-            new Sdk.Api.EnrollmentComposites.SchoolsApi(configuration);
-
-        public Sdk.Api.EnrollmentComposites.IStaffsApi StaffsApi => 
-            new Sdk.Api.EnrollmentComposites.StaffsApi(configuration);
-
-        public Sdk.Api.EnrollmentComposites.IStudentsApi StudentsApi => 
-            new Sdk.Api.EnrollmentComposites.StudentsApi(configuration);
-
-        public Sdk.Api.EnrollmentComposites.ISectionsApi SectionsApi => 
-            new Sdk.Api.EnrollmentComposites.SectionsApi(configuration);
-
-        /// <summary>
-        /// Combines a path and a relative path.
-        /// https://github.com/OfficeDev/PnP-Sites-Core/blob/master/Core/OfficeDevPnP.Core/Utilities/UrlUtility.cs
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="relative"></param>
-        /// <returns></returns>
-        private static string Combine(string path, string relative)
+        public async Task<T> GetApiClassInstance<T>(bool refreshToken = false)
         {
-            const char pathDelimiter = '/';
-            relative ??= string.Empty;
-
-            path ??= string.Empty;
-
-            if (relative.Length == 0 && path.Length == 0)
-                return string.Empty;
-
-            if (relative.Length == 0)
-                return path;
-
-            if (path.Length == 0)
-                return relative;
-
-            path = path.Replace('\\', pathDelimiter);
-            relative = relative.Replace('\\', pathDelimiter);
-
-            var ret = path.TrimEnd(pathDelimiter) + pathDelimiter + relative.TrimStart(pathDelimiter);
-            return ret;
+            var apiConfiguration = await _configurationService.ApiConfiguration(refreshToken);
+            return (T)Activator.CreateInstance(typeof(T), apiConfiguration);
         }
     }
 }

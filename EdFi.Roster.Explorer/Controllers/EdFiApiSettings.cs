@@ -1,4 +1,5 @@
-﻿using EdFi.Roster.Models;
+﻿using System.Threading.Tasks;
+using EdFi.Roster.Models;
 using EdFi.Roster.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -8,30 +9,41 @@ namespace EdFi.Roster.Explorer.Controllers
 {
     public class EdFiApiSettings : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+        private readonly BearerTokenService _bearerTokenService;
+        private readonly ApiSettingsService _apiSettingsService;
+
+        public EdFiApiSettings(BearerTokenService bearerTokenService, ApiSettingsService apiSettingsService)
         {
-            var service = new ApiSettingsService();
-            var model = service.Read();
+            _bearerTokenService = bearerTokenService;
+            _apiSettingsService = apiSettingsService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var model = await _apiSettingsService.Read();
             return View(model);
         }
 
         [HttpPost]
-        public IActionResult SaveSettings(string rootUrl, string key, string secret)
+        public async Task<IActionResult> SaveSettings(string rootUrl, string key, string secret)
         {
             //save the settings
-            var service = new ApiSettingsService();
             var model = new ApiSettings{Key = key, RootUrl = rootUrl, Secret = secret};
-            service.Save(model);
+            await _apiSettingsService.Save(model);
             return new JsonResult(model);
         }
 
         [HttpPost]
-        public IActionResult TestConnection(string rootUrl, string key, string secret)
+        public async Task<IActionResult> TestConnection(string rootUrl, string key, string secret)
         {
-            //Get token info to test the connection
-            var service = new BearerTokenService();
-            var response = service.GetNewBearerTokenResponse(rootUrl, key, secret);
+            var response = await _bearerTokenService.GetNewBearerTokenResponse(new ApiSettings
+            {
+                RootUrl = rootUrl, 
+                Key = key, 
+                Secret = secret
+            });
+
             var content = JsonConvert.SerializeObject(response);
             return Content(content, "application/json");
         }
