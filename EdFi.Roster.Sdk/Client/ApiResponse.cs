@@ -55,11 +55,6 @@ namespace EdFi.Roster.Sdk.Client
         /// The raw content of this response
         /// </summary>
         string RawContent { get; }
-
-        /// <summary>
-        /// Customized property added to keep track of the response uri
-        /// </summary>
-        public Uri ResponseUri { get; set; }
     }
 
     /// <summary>
@@ -118,12 +113,6 @@ namespace EdFi.Roster.Sdk.Client
         /// </summary>
         public string RawContent { get; }
 
-
-        /// <summary>
-        /// Customized property added to keep track of the response uri
-        /// </summary>
-        public Uri ResponseUri { get; set; }
-
         #endregion Properties
 
         #region Constructors
@@ -135,14 +124,12 @@ namespace EdFi.Roster.Sdk.Client
         /// <param name="headers">HTTP headers.</param>
         /// <param name="data">Data (parsed HTTP body)</param>
         /// <param name="rawContent">Raw content.</param>
-        /// <param name="responseUri">Response Uri</param>
-        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data, string rawContent, Uri responseUri)
+        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data, string rawContent)
         {
             StatusCode = statusCode;
             Headers = headers;
             Data = data;
             RawContent = rawContent;
-            ResponseUri = responseUri;
         }
 
         /// <summary>
@@ -151,7 +138,7 @@ namespace EdFi.Roster.Sdk.Client
         /// <param name="statusCode">HTTP status code.</param>
         /// <param name="headers">HTTP headers.</param>
         /// <param name="data">Data (parsed HTTP body)</param>
-        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data) : this(statusCode, headers, data, null, null)
+        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data) : this(statusCode, headers, data, null)
         {
         }
 
@@ -171,28 +158,6 @@ namespace EdFi.Roster.Sdk.Client
         /// <param name="statusCode">HTTP status code.</param>
         /// <param name="data">Data (parsed HTTP body)</param>
         public ApiResponse(HttpStatusCode statusCode, T data) : this(statusCode, data, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApiResponse{T}" /> class.
-        /// </summary>
-        /// <param name="statusCode">HTTP status code.</param>
-        /// <param name="headers">HTTP headers.</param>
-        /// <param name="data">Data (parsed HTTP body)</param>
-        /// <param name="responseUri">Response Uri</param>
-        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data, Uri responseUri) : this(statusCode, headers, data, null, responseUri)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApiResponse{T}" /> class.
-        /// </summary>
-        /// <param name="statusCode">HTTP status code.</param>
-        /// <param name="headers">HTTP headers.</param>
-        /// <param name="data">Data (parsed HTTP body)</param>
-        /// <param name="rawContent">Raw content.</param>
-        public ApiResponse(HttpStatusCode statusCode, Multimap<string, string> headers, T data, string rawContent) : this(statusCode, headers, data, rawContent, null)
         {
         }
 

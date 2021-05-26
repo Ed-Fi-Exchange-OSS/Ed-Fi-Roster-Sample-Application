@@ -46,9 +46,7 @@ namespace EdFi.Roster.Services
 
             //return results
             return new ApiResponse<BearerTokenResponse>(bearerTokenResponse.StatusCode,
-                headersMap,
-                (BearerTokenResponse)bearerTokenResponse.Data,
-                bearerTokenResponse.ResponseUri);
+                headersMap, bearerTokenResponse.Data);
         }
 
         private async Task LogDetails(IRestRequest bearerTokenRequest, IRestResponse<BearerTokenResponse> bearerTokenResponse)

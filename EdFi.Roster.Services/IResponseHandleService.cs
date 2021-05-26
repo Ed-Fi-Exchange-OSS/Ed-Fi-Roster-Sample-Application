@@ -9,7 +9,7 @@ namespace EdFi.Roster.Services
 {
     public interface IResponseHandleService
     {
-        Task<ExtendedInfoResponse<List<T>>> Handle<T>(ApiResponse<List<T>> apiResponse, ExtendedInfoResponse<List<T>> response, string errorMessage)
+        Task<ExtendedInfoResponse<List<T>>> Handle<T>(ApiResponse<List<T>> apiResponse, ExtendedInfoResponse<List<T>> response, Uri responseUri, string errorMessage)
             where T : class;
     }
 
@@ -23,12 +23,12 @@ namespace EdFi.Roster.Services
         }
 
         public async Task<ExtendedInfoResponse<List<T>>> Handle<T>(ApiResponse<List<T>> apiResponse, 
-            ExtendedInfoResponse<List<T>> response, string errorMessage) where T : class
+            ExtendedInfoResponse<List<T>> response, Uri responseUri, string errorMessage) where T : class
         {
             var responsePage = new ExtendedInfoResponsePage
             {
                 RecordsCount = apiResponse.Data.Count,
-                ResponseUri = apiResponse.ResponseUri
+                ResponseUri = responseUri
             };
             response.GeneralInfo.Pages.Add(responsePage);
             response.FullDataSet.AddRange(apiResponse.Data);
@@ -42,7 +42,7 @@ namespace EdFi.Roster.Services
                 Content = string.IsNullOrEmpty(errorMessage)
                     ? JsonConvert.SerializeObject(apiResponse.Data, Formatting.Indented)
                     : errorMessage,
-                Uri = apiResponse.ResponseUri.ToString()
+                Uri = responseUri.ToString()
             };
             await _logService.WriteLog(apiLogEntry);
 

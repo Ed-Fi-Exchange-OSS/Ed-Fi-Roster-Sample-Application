@@ -391,8 +391,7 @@ namespace EdFi.Roster.Sdk.Client
             var transformed = new ApiResponse<T>(response.StatusCode, new Multimap<string, string>(), result, rawContent)
             {
                 ErrorText = response.ErrorMessage,
-                Cookies = new List<Cookie>(),
-                ResponseUri = response.ResponseUri // Customization to set ResponseUri property  
+                Cookies = new List<Cookie>()
             };
 
             if (response.Headers != null)
